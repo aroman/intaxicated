@@ -11,6 +11,29 @@ import maskTile from './mask.png'
 import blackTile from './blackTile.png'
 import './Game.css'
 
+// How frequently we poll the server for changes
+const POLL_FREQUENCY = 750 // ms
+const POLL_TIMEOUT = 1500 // ms
+const SERVER_URL = 'http://localhost:5000'
+
+function timeout(ms, promise) {
+  return new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      reject(new Error('timeout'))
+    }, ms)
+    promise.then(resolve, reject)
+  })
+}
+
+const phaseDescription = index => ([
+  'WAIT_FOR_SERVER',
+  'WAIT_FOR_PLAYER_1',
+  'WAIT_FOR_PLAYER_2',
+  'WAIT_FOR_ROUND_START',
+  'IN_ROUND',
+  'ROUND_ENDED',
+][index])
+
 class Grid extends Component {
 
   render() {
@@ -54,11 +77,39 @@ class Game extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      position: {x: 0, y: 0},
-      size: 10,
-      imageWidth: 700,
-      imageHeight: 600,
+      debug: false,
+      board: {
+          image: 'foo.jpg',
+          width: 500,
+          height: 400,
+          gridSize: 10,
+      },
+      player1: {
+          x: 3,
+          y: 2,
+      },
+      player2: {
+          x: 3,
+          y: 0
+      },
+      phase: 0,
     }
+    this.onPollTimer()
+    setInterval(this.onPollTimer.bind(this), POLL_FREQUENCY)
+  }
+
+  onPollTimer() {
+    timeout(POLL_TIMEOUT, fetch(`${SERVER_URL}/state`))
+    .then(response => response.json())
+    .then(gameState => this.onNewGameState(gameState))
+    .catch(error => {
+      this.setState({isLoading: true})
+      console.error(error)
+    })
+  }
+
+  onNewGameState(nextGameState) {
+    this.setState({...nextGameState})
   }
 
   move(key) {
@@ -76,7 +127,12 @@ class Game extends Component {
     const imageHeight = this.state.imageHeight
     const imageWidth = this.state.imageWidth
     return (
-      <div className="Board">
+      <div className="Game">
+        <KeyHandler
+          keyEventName="keydown"
+          keyValue='`'
+          onKeyHandle={() => this.setState({debug: !this.state.debug})}
+        />
         {
           ['Up', 'Down', 'Right', 'Left'].map(dir => (
             <KeyHandler
@@ -85,6 +141,13 @@ class Game extends Component {
               onKeyHandle={event => event.preventDefault() || this.move(dir)}
             />
           ))
+        }
+        {
+          !this.state.debug ? null :
+          <div className="Debug">
+            <pre className="Debug-Phase">{phaseDescription(this.state.phase)}</pre>
+            <pre className="Debug-State">{JSON.stringify(this.state, null, 2)}</pre>
+          </div>
         }
         <div className="Title">Tunnel Vision</div>
         <img className="Grid-Image" src={background} style={{width: imageWidth, height: imageHeight}}/>
