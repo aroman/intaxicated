@@ -10,17 +10,27 @@ import maskTile from './mask.png'
 import blackTile from './blackTile.png'
 import './Game.css'
 
-// How frequently we poll the server for changes
-const POLL_FREQUENCY = 750 // ms
-const POLL_TIMEOUT = 1500 // ms
-const SERVER_URL = 'http://localhost:5000'
+import state from './shared/state.js'
 
-function timeout(ms, promise) {
-  return new Promise(function(resolve, reject) {
-    setTimeout(function() {
-      reject(new Error('timeout'))
-    }, ms)
-    promise.then(resolve, reject)
+// How frequently we poll the server for changes
+const POLL_FREQUENCY = 150 // ms
+const POLL_TIMEOUT = 1500 // ms
+
+
+const fetchServer = path => {
+  function timeout(ms, promise) {
+    return new Promise(function(resolve, reject) {
+      setTimeout(function() {
+        reject(new Error('timeout'))
+      }, ms)
+      promise.then(resolve, reject)
+    })
+  }
+  return timeout(POLL_TIMEOUT, fetch(`/${path}`))
+  .then(response => response.json())
+  .catch(error => {
+    alert('Whoops! The game broke. Check the error console.')
+    console.error(error)
   })
 }
 
@@ -82,36 +92,21 @@ class Game extends Component {
     this.state = {
       // Local
       debug: false,
+      playerNum: document.location.search.includes('1') ? 1 : 0,
 
-      // Synced with server
-      board: {
-          image: 'foo.jpg',
-          width: 600,
-          height: 400,
-          gridSize: 10,
-      },
-      player1: {
-          x: 0,
-          y: 0,
-      },
-      player2: {
-          x: 0,
-          y: 0,
-      },
-      phase: 0,
+      ...state.InitialState,
     }
     this.onPollTimer()
     setInterval(this.onPollTimer.bind(this), POLL_FREQUENCY)
   }
 
+  getLocalPlayer() {
+    return this.state.players[this.state.playerNum]
+  }
+
   onPollTimer() {
-    timeout(POLL_TIMEOUT, fetch(`${SERVER_URL}/state`))
-    .then(response => response.json())
+    fetchServer('state')
     .then(gameState => this.onNewGameState(gameState))
-    .catch(error => {
-      this.setState({isLoading: true})
-      console.error(error)
-    })
   }
 
   onNewGameState(nextGameState) {
@@ -119,14 +114,16 @@ class Game extends Component {
   }
 
   move(key) {
-    let {x, y} = this.state.player1
+    let {x, y} = this.getLocalPlayer()
     if (key === 'Up') y -= 1
     if (key === 'Down') y += 1
     if (key === 'Right') x += 1
     if (key === 'Left') x -= 1
     if (x < 0 || x >= this.state.board.gridSize) return
     if (y < 0 || y >= this.state.board.gridSize) return
-    this.setState({player1: {x, y}})
+
+    fetchServer(`move/${this.state.playerNum}/${x}/${y}`)
+    .then(gameState => this.onNewGameState(gameState))
   }
 
   render() {
@@ -163,7 +160,7 @@ class Game extends Component {
           imageWidth={imageWidth}
           imageHeight={imageHeight}
           cols={this.state.board.gridSize}
-          revealed={this.state.player1}
+          revealed={this.getLocalPlayer()}
         />
       </div>
     )

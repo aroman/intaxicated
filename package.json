@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "express": "^4.16.1"
+  },
+  "name": "tunnel-vision-server",
+  "version": "1.0.0",
+  "description": "Server for Tunnel Vision game",
+  "main": "server.js",
+  "repository": "https://github.com/aroman/tunnel-vision",
+  "author": "Avi Romanoff <avi@romanoff.me>",
+  "license": "UNLICENSED",
+  "private": true
+}
