@@ -1,9 +1,8 @@
 import 'moment-duration-format'
-import Sound from 'react-sound'
-import classNames from 'class-names'
+// import classNames from 'class-names'
 import _ from 'lodash'
 import React, { Component } from 'react'
-import moment from 'moment'
+// import moment from 'moment'
 
 import KeyHandler from 'react-key-handler'
 import background from './scifi.jpg'
@@ -45,20 +44,24 @@ class Grid extends Component {
       imageWidth,
     } = this.props
 
-    const isRevealed = (x, y) => (x == revealed.x && y == revealed.y)
+    const isRevealed = (x, y) => (x === revealed.x && y === revealed.y)
     return (
       <div className="Grid" style={{marginTop: -imageHeight}}>
         {
           _.range(rows).map(x => (
-            <div className="Grid-Row">
+            <div className="Grid-Row" key={x}>
               {
                 _.range(cols).map(y => (
                     isRevealed(x,y) ?
                     <img
+                      alt=''
                       src={maskTile}
+                      key={`${x},${y}`}
                       className='Grid-Square'
                       style={ {width: imageWidth / rows, height: imageHeight / cols}} />
                     : <img
+                      alt=''
+                      key={`${x},${y}`}
                       src={blackTile}
                       className='Grid-Square'
                       style={ {width: imageWidth / rows, height: imageHeight / cols}} />
@@ -77,20 +80,23 @@ class Game extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      // Local
       debug: false,
+
+      // Synced with server
       board: {
           image: 'foo.jpg',
-          width: 500,
+          width: 600,
           height: 400,
           gridSize: 10,
       },
       player1: {
-          x: 3,
-          y: 2,
+          x: 0,
+          y: 0,
       },
       player2: {
-          x: 3,
-          y: 0
+          x: 0,
+          y: 0,
       },
       phase: 0,
     }
@@ -113,19 +119,19 @@ class Game extends Component {
   }
 
   move(key) {
-    let {x, y} = this.state.position
-    if (key == 'Up') y -= 1
-    if (key == 'Down') y += 1
-    if (key == 'Right') x += 1
-    if (key == 'Left') x -= 1
-    if (x < 0 || x >= this.state.size) return
-    if (y < 0 || y >= this.state.size) return
-    this.setState({position: {x, y}})
+    let {x, y} = this.state.player1
+    if (key === 'Up') y -= 1
+    if (key === 'Down') y += 1
+    if (key === 'Right') x += 1
+    if (key === 'Left') x -= 1
+    if (x < 0 || x >= this.state.board.gridSize) return
+    if (y < 0 || y >= this.state.board.gridSize) return
+    this.setState({player1: {x, y}})
   }
 
   render() {
-    const imageHeight = this.state.imageHeight
-    const imageWidth = this.state.imageWidth
+    const imageHeight = this.state.board.height
+    const imageWidth = this.state.board.width
     return (
       <div className="Game">
         <KeyHandler
@@ -138,6 +144,7 @@ class Game extends Component {
             <KeyHandler
               keyEventName="keydown"
               keyValue={`Arrow${dir}`}
+              key={dir}
               onKeyHandle={event => event.preventDefault() || this.move(dir)}
             />
           ))
@@ -150,13 +157,13 @@ class Game extends Component {
           </div>
         }
         <div className="Title">Tunnel Vision</div>
-        <img className="Grid-Image" src={background} style={{width: imageWidth, height: imageHeight}}/>
+        <img className="Grid-Image" alt='' src={background} style={{width: imageWidth, height: imageHeight}}/>
         <Grid
-          rows={this.state.size}
+          rows={this.state.board.gridSize}
           imageWidth={imageWidth}
           imageHeight={imageHeight}
-          cols={this.state.size}
-          revealed={this.state.position}
+          cols={this.state.board.gridSize}
+          revealed={this.state.player1}
         />
       </div>
     )

@@ -3,8 +3,7 @@ html, body, #root {
   color: white;
   font-size: 100px;
   font-family: 'helvetica neue', 'helvetica';
-  /*background-color: #444;*/
-  background-color: black;
+  background-color: gray;
 }
 
 .Debug {
