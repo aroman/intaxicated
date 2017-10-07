@@ -7,6 +7,8 @@ venv/
 # production
 build/
 
+*.pyc
+
 # misc
 .DS_Store
 .env.local
