@@ -1,0 +1,48 @@
+html, body, #root {
+  height: 100%;
+  color: white;
+  font-size: 100px;
+  font-family: 'helvetica neue', 'helvetica';
+  /*background-color: #444;*/
+  background-color: black;
+}
+
+.Title {
+  font-size: 50px;
+  margin-bottom: 30px;
+}
+
+.Board {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.Grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Grid-Row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.Grid-Image {
+  width: 50px;
+  height: 50px;
+  z-index: 0;
+}
+
+.Grid-Square {
+  z-index: 100;
+  border: 1px solid #333;
+  width: 50px;
+  height: 50px;
+  box-sizing: border-box;
+}
