@@ -1,5 +1,4 @@
 const Phases = [
-  'WAIT_FOR_SERVER',
   'WAIT_FOR_PLAYER_1',
   'WAIT_FOR_PLAYER_2',
   'WAIT_FOR_ROUND_START',
@@ -30,7 +29,5 @@ module.exports = {
   },
 
   Phases: Phases,
-
-  phaseDescription: index => Phases[index],
 
 }

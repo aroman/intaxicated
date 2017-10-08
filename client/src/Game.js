@@ -10,13 +10,102 @@ import maskTile from './mask.png'
 import blackTile from './blackTile.png'
 import './Game.css'
 
-import state from './shared/state.js'
+import GameState from './shared/GameState.js'
 
 // How frequently we poll the server for changes
-const POLL_FREQUENCY = 150 // ms
+const POLL_FREQUENCY = 250 // ms
 const POLL_TIMEOUT = 1500 // ms
 
+class WaitForPlayerOne extends Component {
 
+  render() {
+    return (
+      <div>
+        {
+          this.props.playerNum === 0 ?
+          <button onClick={this.props.join}>Join Game!</button>
+          :
+          null
+        }
+      </div>
+    )
+  }
+
+}
+
+class WaitForPlayerTwo extends Component {
+
+  render() {
+    return (
+      <div>
+        {
+          this.props.playerNum === 0 ?
+          <div>Waiting for player 2...</div>
+          :
+          <button onClick={this.props.join}>Join Game!</button>
+        }
+      </div>
+    )
+  }
+
+}
+
+class WaitForRoundStart extends Component {
+
+  render() {
+    return (
+      <div>Waiting for round start</div>
+    )
+  }
+
+}
+
+class RoundEnded extends Component {
+
+  render() {
+    return (
+      <div>Round ended</div>
+    )
+  }
+
+}
+
+class InRound extends Component {
+
+  render() {
+    const imageHeight = this.props.board.height
+    const imageWidth = this.props.board.width
+    return (
+      <div>In round!
+        {['Up', 'Down', 'Right', 'Left'].map(dir => (
+          <KeyHandler
+            keyEventName="keydown"
+            keyValue={`Arrow${dir}`}
+            key={dir}
+            onKeyHandle={event => event.preventDefault() || this.props.move(dir)}
+          />
+        ))}
+        <img className="Grid-Image" alt='' src={background} style={{width: imageWidth, height: imageHeight}}/>
+        <Grid
+          rows={this.props.board.gridSize}
+          imageWidth={imageWidth}
+          imageHeight={imageHeight}
+          cols={this.props.board.gridSize}
+          revealed={this.getLocalPlayer()}
+        />
+      </div>
+    )
+  }
+
+}
+
+const phaseComponents = [
+  React.createFactory(WaitForPlayerOne),
+  React.createFactory(WaitForPlayerTwo),
+  React.createFactory(WaitForRoundStart),
+  React.createFactory(InRound),
+  React.createFactory(RoundEnded),
+]
 const fetchServer = path => {
   function timeout(ms, promise) {
     return new Promise(function(resolve, reject) {
@@ -29,19 +118,10 @@ const fetchServer = path => {
   return timeout(POLL_TIMEOUT, fetch(`/${path}`))
   .then(response => response.json())
   .catch(error => {
-    alert('Whoops! The game broke. Check the error console.')
+    // alert('Whoops! The game broke. Check the error console.')
     console.error(error)
   })
 }
-
-const phaseDescription = index => ([
-  'WAIT_FOR_SERVER',
-  'WAIT_FOR_PLAYER_1',
-  'WAIT_FOR_PLAYER_2',
-  'WAIT_FOR_ROUND_START',
-  'IN_ROUND',
-  'ROUND_ENDED',
-][index])
 
 class Grid extends Component {
 
@@ -94,7 +174,7 @@ class Game extends Component {
       debug: false,
       playerNum: document.location.search.includes('1') ? 1 : 0,
 
-      ...state.InitialState,
+      ...GameState.InitialState,
     }
     this.onPollTimer()
     setInterval(this.onPollTimer.bind(this), POLL_FREQUENCY)
@@ -126,42 +206,43 @@ class Game extends Component {
     .then(gameState => this.onNewGameState(gameState))
   }
 
+  join() {
+    fetchServer(`join/${this.state.playerNum}`)
+    .then(gameState => this.onNewGameState(gameState))
+  }
+
+  reset() {
+    if (!this.state.debug) return
+    fetchServer(`reset`)
+    .then(gameState => this.onNewGameState(gameState))
+  }
+
   render() {
-    const imageHeight = this.state.board.height
-    const imageWidth = this.state.board.width
     return (
       <div className="Game">
+        <div className="Title">Tunnel Vision</div>
+        <KeyHandler
+          keyEventName="keydown"
+          keyValue='~'
+          onKeyHandle={this.reset.bind(this)}
+        />
         <KeyHandler
           keyEventName="keydown"
           keyValue='`'
           onKeyHandle={() => this.setState({debug: !this.state.debug})}
         />
-        {
-          ['Up', 'Down', 'Right', 'Left'].map(dir => (
-            <KeyHandler
-              keyEventName="keydown"
-              keyValue={`Arrow${dir}`}
-              key={dir}
-              onKeyHandle={event => event.preventDefault() || this.move(dir)}
-            />
-          ))
-        }
+        { phaseComponents[this.state.phase]({
+          ...this.state,
+          move: this.move.bind(this),
+          join: this.join.bind(this),
+        }) }
         {
           !this.state.debug ? null :
           <div className="Debug">
-            <pre className="Debug-Phase">{phaseDescription(this.state.phase)}</pre>
+            <pre className="Debug-Phase">{GameState.Phases[this.state.phase]}</pre>
             <pre className="Debug-State">{JSON.stringify(this.state, null, 2)}</pre>
           </div>
         }
-        <div className="Title">Tunnel Vision</div>
-        <img className="Grid-Image" alt='' src={background} style={{width: imageWidth, height: imageHeight}}/>
-        <Grid
-          rows={this.state.board.gridSize}
-          imageWidth={imageWidth}
-          imageHeight={imageHeight}
-          cols={this.state.board.gridSize}
-          revealed={this.getLocalPlayer()}
-        />
       </div>
     )
   }

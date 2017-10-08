@@ -1,12 +1,13 @@
 {
   "dependencies": {
-    "express": "^4.16.1"
+    "express": "^4.16.1",
+    "lodash": "^4.17.4"
   },
   "name": "tunnel-vision-server",
   "version": "1.0.0",
   "description": "Server for Tunnel Vision game",
   "scripts": {
-    "start": "node index.js",
+    "start": "node server.js",
     "heroku-postbuild": "cd client && yarn --production=false && yarn run build"
   },
   "main": "server.js",
