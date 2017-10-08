@@ -16,6 +16,23 @@ import GameState from './shared/GameState.js'
 const POLL_FREQUENCY = 250 // ms
 const POLL_TIMEOUT = 1500 // ms
 
+const fetchServer = path => {
+  function timeout(ms, promise) {
+    return new Promise(function(resolve, reject) {
+      setTimeout(function() {
+        reject(new Error('timeout'))
+      }, ms)
+      promise.then(resolve, reject)
+    })
+  }
+  return timeout(POLL_TIMEOUT, fetch(`/${path}`))
+  .then(response => response.json())
+  .catch(error => {
+    // alert('Whoops! The game broke. Check the error console.')
+    console.error(error)
+  })
+}
+
 class WaitForPlayerOne extends Component {
 
   render() {
@@ -99,30 +116,6 @@ class InRound extends Component {
 
 }
 
-const phaseComponents = [
-  React.createFactory(WaitForPlayerOne),
-  React.createFactory(WaitForPlayerTwo),
-  React.createFactory(WaitForRoundStart),
-  React.createFactory(InRound),
-  React.createFactory(RoundEnded),
-]
-const fetchServer = path => {
-  function timeout(ms, promise) {
-    return new Promise(function(resolve, reject) {
-      setTimeout(function() {
-        reject(new Error('timeout'))
-      }, ms)
-      promise.then(resolve, reject)
-    })
-  }
-  return timeout(POLL_TIMEOUT, fetch(`/${path}`))
-  .then(response => response.json())
-  .catch(error => {
-    // alert('Whoops! The game broke. Check the error console.')
-    console.error(error)
-  })
-}
-
 class Grid extends Component {
 
   render() {
@@ -164,6 +157,42 @@ class Grid extends Component {
     )
   }
 }
+
+class DebugTools extends Component {
+
+  render() {
+    return (
+      <div className="DebugTools">
+        <KeyHandler
+          keyEventName="keydown"
+          keyValue='~'
+          onKeyHandle={this.props.reset}
+        />
+        <KeyHandler
+          keyEventName="keydown"
+          keyValue='`'
+          onKeyHandle={this.props.toggleDebug}
+        />
+        {
+          !this.props.state.debug ? null :
+          <div className="Debug">
+            <pre className="Debug-Phase">{GameState.Phases[this.props.state.phase]}</pre>
+            <pre className="Debug-State">{JSON.stringify(this.props.state, null, 2)}</pre>
+          </div>
+        }
+      </div>
+    )
+  }
+
+}
+
+const phaseComponents = [
+  React.createFactory(WaitForPlayerOne),
+  React.createFactory(WaitForPlayerTwo),
+  React.createFactory(WaitForRoundStart),
+  React.createFactory(InRound),
+  React.createFactory(RoundEnded),
+]
 
 class Game extends Component {
 
@@ -221,28 +250,16 @@ class Game extends Component {
     return (
       <div className="Game">
         <div className="Title">Tunnel Vision</div>
-        <KeyHandler
-          keyEventName="keydown"
-          keyValue='~'
-          onKeyHandle={this.reset.bind(this)}
-        />
-        <KeyHandler
-          keyEventName="keydown"
-          keyValue='`'
-          onKeyHandle={() => this.setState({debug: !this.state.debug})}
+        <DebugTools
+            toggleDebug={() => this.setState({debug: !this.state.debug})}
+            reset={this.reset.bind(this)}
+            state={this.state}
         />
         { phaseComponents[this.state.phase]({
           ...this.state,
           move: this.move.bind(this),
           join: this.join.bind(this),
         }) }
-        {
-          !this.state.debug ? null :
-          <div className="Debug">
-            <pre className="Debug-Phase">{GameState.Phases[this.state.phase]}</pre>
-            <pre className="Debug-State">{JSON.stringify(this.state, null, 2)}</pre>
-          </div>
-        }
       </div>
     )
   }
