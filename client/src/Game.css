@@ -25,6 +25,13 @@ html, body, #root {
   margin-bottom: 30px;
 }
 
+.InRound {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .Game {
   display: flex;
   align-items: center;

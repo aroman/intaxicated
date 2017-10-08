@@ -40,7 +40,7 @@ class WaitForPlayerOne extends Component {
       <div>
         {
           this.props.playerNum === 0 ?
-          <button onClick={this.props.join}>Join Game!</button>
+          <button onClick={this.props.join}>Let's play!</button>
           :
           null
         }
@@ -71,7 +71,14 @@ class WaitForRoundStart extends Component {
 
   render() {
     return (
-      <div>Waiting for round start</div>
+      <div>
+        {
+          this.props.playerNum === 0 ?
+          <button onClick={this.props.start}>Start Game!</button>
+          :
+          <div>Waiting for player 1 to start the game...</div>
+        }
+      </div>
     )
   }
 
@@ -93,22 +100,25 @@ class InRound extends Component {
     const imageHeight = this.props.board.height
     const imageWidth = this.props.board.width
     return (
-      <div>In round!
-        {['Up', 'Down', 'Right', 'Left'].map(dir => (
-          <KeyHandler
-            keyEventName="keydown"
-            keyValue={`Arrow${dir}`}
-            key={dir}
-            onKeyHandle={event => event.preventDefault() || this.props.move(dir)}
-          />
-        ))}
+      <div className='InRound'>
+        {
+          !this.props.getLocalPlayer().inTurn ? null :
+          ['Up', 'Down', 'Right', 'Left'].map(dir => (
+            <KeyHandler
+              keyEventName="keydown"
+              keyValue={`Arrow${dir}`}
+              key={dir}
+              onKeyHandle={event => event.preventDefault() || this.props.move(dir)}
+            />
+          ))
+        }
         <img className="Grid-Image" alt='' src={background} style={{width: imageWidth, height: imageHeight}}/>
         <Grid
           rows={this.props.board.gridSize}
           imageWidth={imageWidth}
           imageHeight={imageHeight}
           cols={this.props.board.gridSize}
-          revealed={this.getLocalPlayer()}
+          revealed={this.props.getLocalPlayer()}
         />
       </div>
     )
@@ -200,7 +210,7 @@ class Game extends Component {
     super(props)
     this.state = {
       // Local
-      debug: false,
+      debug: true,
       playerNum: document.location.search.includes('1') ? 1 : 0,
 
       ...GameState.InitialState,
@@ -246,6 +256,11 @@ class Game extends Component {
     .then(gameState => this.onNewGameState(gameState))
   }
 
+  start() {
+    fetchServer(`start`)
+    .then(gameState => this.onNewGameState(gameState))
+  }
+
   render() {
     return (
       <div className="Game">
@@ -259,6 +274,8 @@ class Game extends Component {
           ...this.state,
           move: this.move.bind(this),
           join: this.join.bind(this),
+          start: this.start.bind(this),
+          getLocalPlayer: this.getLocalPlayer.bind(this),
         }) }
       </div>
     )

@@ -1,16 +1,16 @@
 const express = require('express')
 const path = require('path')
-const _ = require('lodash')
 const GameState = require('./client/src/shared/GameState.js')
 
 const app = express()
 
 // Game state
-const initialState = () => _.cloneDeep(GameState.InitialState)
-let state = initialState()
+let state = GameState.freshGameState()
 
 const phaseNamed = name => GameState.Phases.indexOf(name)
 const inPhase = name => phaseNamed(name) === state.phase
+const nextPlayer = player => (player + 1) % state.players.length
+const allPlayersAtSameSpotAs = player => state.players.every(({x, y}) => x === player.x && y === player.y)
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')))
@@ -20,19 +20,38 @@ app.get('/state', (req, res) => {
 })
 
 app.get('/reset', (req, res) => {
-  state = initialState()
+  state = GameState.freshGameState()
+  res.json(state)
+})
+
+app.get('/start', (req, res) => {
+  if (inPhase('WAIT_FOR_ROUND_START')) {
+    state.phase = phaseNamed('IN_ROUND')
+  }
   res.json(state)
 })
 
 app.get('/move/:player/:x/:y', (req, res) => {
-  const { player, x, y } = req.params
-  state.players[player].x = Number(x)
-  state.players[player].y = Number(y)
+  const player = Number(req.params.player)
+  const x = Number(req.params.x)
+  const y = Number(req.params.y)
+
+  if (state.players[player].inTurn) {
+    state.players[player].x = x
+    state.players[player].y = y
+    state.players[player].inTurn = false
+    state.players[nextPlayer(player)].inTurn = true
+  }
+
+  if (allPlayersAtSameSpotAs(state.players[0])) {
+    state.phase = phaseNamed('ROUND_ENDED')
+  }
+
   res.json(state)
 })
 
 app.get('/join/:player', (req, res) => {
-  const { player } = req.params
+  const player = Number(req.params.player)
   if (inPhase('WAIT_FOR_PLAYER_1')) {
     state.phase = phaseNamed('WAIT_FOR_PLAYER_2')
   }

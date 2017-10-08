@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "express": "^4.16.1",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1"
   },
   "name": "tunnel-vision-server",
   "version": "1.0.0",
