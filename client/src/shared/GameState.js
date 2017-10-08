@@ -13,9 +13,7 @@ const InitialState = {
   phase: 0,
   board: {
       image: 'foo.jpg',
-      width: 600,
-      height: 400,
-      gridSize: 9,
+      gridSize: 10,
   },
   players: [
     {
@@ -31,36 +29,43 @@ const InitialState = {
   ],
 }
 
+function randomPlayers() {
+  const randomCoordinate = () => _.random(0, InitialState.board.gridSize - 1)
+  const randomizePlayers = () => InitialState.players.map(player => ({
+    ...player,
+    x: randomCoordinate(),
+    y: randomCoordinate(),
+  }))
+  const playersCloserThan = (a, b, n) => Math.abs(a.x - b.x) < n && Math.abs(a.y - b.y) < n
+  // Euclidean distance. Unclear which algorithm is better.
+  // const square = n => Math.pow(n, 2)
+  // const playersCloserThan = (a, b, n) => Math.sqrt(square(a.x - b.x) + square(a.y - b.y)) < n
+  const noPlayersCloserThan = (players, n) => (
+    players.some((a, i) => (
+      players.some((b, j) =>
+        i !== j && playersCloserThan(a, b, n)
+      )
+    ))
+  )
+  let players = randomizePlayers()
+  while (noPlayersCloserThan(players, 3)) {
+    players = randomizePlayers()
+  }
+  players[0].inTurn = true
+  return players
+}
+
 module.exports = {
 
   InitialState,
 
+  randomPlayers,
+
   freshGameState: () => {
     let state = _.cloneDeep(InitialState)
-    const randomCoordinate = () => _.random(0, state.board.gridSize)
-    const randomizePlayers = () => state.players.map(player => ({
-      x: randomCoordinate(),
-      y: randomCoordinate(),
-      inTurn: false,
-    }))
-    const playersCloserThan = (a, b, n) => Math.abs(a.x - b.x) < n && Math.abs(a.y - b.y) < n
-    // Euclidean distance. Unclear which algorithm is better.
-    // const square = n => Math.pow(n, 2)
-    // const playersCloserThan = (a, b, n) => Math.sqrt(square(a.x - b.x) + square(a.y - b.y)) < n
-    const noPlayersCloserThan = n => (
-      state.players.some((a, i) => (
-        state.players.some((b, j) =>
-          i !== j && playersCloserThan(a, b, n)
-        )
-      ))
-    )
-    while (noPlayersCloserThan(3)) {
-      state.players = randomizePlayers()
-    }
-    state.players[0].inTurn = true
+    state.players = randomPlayers()
     return state
   },
-
 
   Phases: Phases,
 

@@ -3,7 +3,31 @@ html, body, #root {
   color: white;
   font-size: 50px;
   font-family: 'helvetica neue', 'helvetica';
-  background-color: gray;
+  background-color: #394052;
+}
+
+.Game {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  height: 100%;
+}
+
+button {
+  font-size: 40px;
+  border-radius: 10px;
+  outline: 0;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #fff;
+  border: 3px solid black;
+  cursor: pointer;
+}
+
+button:hover {
+  border: 3px solid purple;
 }
 
 .Debug {
@@ -21,8 +45,13 @@ html, body, #root {
 }
 
 .Title {
+  margin-top: 50px;
   font-size: 50px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  width: 100%;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid white;
 }
 
 .InRound {
@@ -32,12 +61,15 @@ html, body, #root {
   flex-direction: column;
 }
 
-.Game {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  height: 100%;
+.InRound-title {
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.InRound-subtitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .Grid {
@@ -54,14 +86,26 @@ html, body, #root {
 }
 
 .Grid-Image {
-  width: 50px;
-  height: 50px;
+  width: 70%;
+  height: 100%;
   z-index: 0;
+}
+
+.RoundEnded {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.RoundEnded-text {
+  font-size: 120px;
+  margin-bottom: 50px;
 }
 
 .Grid-Square {
   z-index: 100;
-  border: 1px solid #333;
+  /*border: 1px solid #333;*/
   width: 50px;
   height: 50px;
   box-sizing: border-box;

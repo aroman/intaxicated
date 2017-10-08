@@ -6,14 +6,14 @@ import React, { Component } from 'react'
 
 import KeyHandler from 'react-key-handler'
 import background from './scifi.jpg'
-import maskTile from './mask.png'
-import blackTile from './blackTile.png'
+// import maskTile from './mask.png'
+// import blackTile from './blackTile.png'
 import './Game.css'
 
 import GameState from './shared/GameState.js'
 
 // How frequently we poll the server for changes
-const POLL_FREQUENCY = 250 // ms
+const POLL_FREQUENCY = 500 // ms
 const POLL_TIMEOUT = 1500 // ms
 
 const fetchServer = path => {
@@ -57,7 +57,7 @@ class WaitForPlayerTwo extends Component {
       <div>
         {
           this.props.playerNum === 0 ?
-          <div>Waiting for player 2...</div>
+          <div className="InRound-title">Waiting for player 2...</div>
           :
           <button onClick={this.props.join}>Join Game!</button>
         }
@@ -74,9 +74,9 @@ class WaitForRoundStart extends Component {
       <div>
         {
           this.props.playerNum === 0 ?
-          <button onClick={this.props.start}>Start Game!</button>
+          <button onClick={this.props.startRound}>Start Game!</button>
           :
-          <div>Waiting for player 1 to start the game...</div>
+          <div className="InRound-title">Waiting for player 1 to start the game...</div>
         }
       </div>
     )
@@ -88,7 +88,11 @@ class RoundEnded extends Component {
 
   render() {
     return (
-      <div>Round ended</div>
+      <div className="RoundEnded">
+        <div className="RoundEnded-text">🎉</div>
+        <button onClick={this.props.restartRound}>Again?</button>
+      </div>
+
     )
   }
 
@@ -97,10 +101,24 @@ class RoundEnded extends Component {
 class InRound extends Component {
 
   render() {
-    const imageHeight = this.props.board.height
-    const imageWidth = this.props.board.width
     return (
       <div className='InRound'>
+        <div className="InRound-title">
+          {
+          !this.props.getLocalPlayer().inTurn ?
+            "It's your partner's move."
+           :
+            "It's your move!"
+          }
+        </div>
+        <div className="InRound-subtitle">
+          {
+          !this.props.getLocalPlayer().inTurn ?
+            "Try to figure out where they are!"
+           :
+            "Move to your partner using the arrow keys!"
+          }
+        </div>
         {
           !this.props.getLocalPlayer().inTurn ? null :
           ['Up', 'Down', 'Right', 'Left'].map(dir => (
@@ -112,14 +130,23 @@ class InRound extends Component {
             />
           ))
         }
-        <img className="Grid-Image" alt='' src={background} style={{width: imageWidth, height: imageHeight}}/>
-        <Grid
-          rows={this.props.board.gridSize}
-          imageWidth={imageWidth}
-          imageHeight={imageHeight}
-          cols={this.props.board.gridSize}
-          revealed={this.props.getLocalPlayer()}
+        <img
+          className="Grid-Image"
+          alt=""
+          src={background}
+          style={{opacity: this.image ? 'unset' : 0}}
+          ref={img => this.image = img}
         />
+        {
+          !this.image ? null :
+          <Grid
+            rows={this.props.board.gridSize}
+            imageWidth={this.image.width}
+            imageHeight={this.image.height}
+            cols={this.props.board.gridSize}
+            revealed={this.props.getLocalPlayer()}
+          />
+        }
       </div>
     )
   }
@@ -138,6 +165,8 @@ class Grid extends Component {
     } = this.props
 
     const isRevealed = (x, y) => (x === revealed.x && y === revealed.y)
+      console.log(imageWidth, imageHeight)
+      console.log(rows, cols)
     return (
       <div className="Grid" style={{marginTop: -imageHeight}}>
         {
@@ -146,18 +175,14 @@ class Grid extends Component {
               {
                 _.range(cols).map(y => (
                     isRevealed(x,y) ?
-                    <img
-                      alt=''
-                      src={maskTile}
+                    <div
                       key={`${x},${y}`}
                       className='Grid-Square'
-                      style={ {width: imageWidth / rows, height: imageHeight / cols}} />
-                    : <img
-                      alt=''
+                      style={{width: imageWidth / rows, height: imageHeight / cols, background: 'unset'}} />
+                    : <div
                       key={`${x},${y}`}
-                      src={blackTile}
                       className='Grid-Square'
-                      style={ {width: imageWidth / rows, height: imageHeight / cols}} />
+                      style={{width: imageWidth / rows, height: imageHeight / cols, background: 'black'}} />
                 ))
               }
             </div>
@@ -210,7 +235,7 @@ class Game extends Component {
     super(props)
     this.state = {
       // Local
-      debug: true,
+      debug: false,
       playerNum: document.location.search.includes('1') ? 1 : 0,
 
       ...GameState.InitialState,
@@ -256,8 +281,13 @@ class Game extends Component {
     .then(gameState => this.onNewGameState(gameState))
   }
 
-  start() {
-    fetchServer(`start`)
+  startRound() {
+    fetchServer(`round/start`)
+    .then(gameState => this.onNewGameState(gameState))
+  }
+
+  restartRound() {
+    fetchServer(`round/restart`)
     .then(gameState => this.onNewGameState(gameState))
   }
 
@@ -274,7 +304,8 @@ class Game extends Component {
           ...this.state,
           move: this.move.bind(this),
           join: this.join.bind(this),
-          start: this.start.bind(this),
+          startRound: this.startRound.bind(this),
+          restartRound: this.restartRound.bind(this),
           getLocalPlayer: this.getLocalPlayer.bind(this),
         }) }
       </div>

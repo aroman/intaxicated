@@ -24,9 +24,17 @@ app.get('/reset', (req, res) => {
   res.json(state)
 })
 
-app.get('/start', (req, res) => {
+app.get('/round/start', (req, res) => {
   if (inPhase('WAIT_FOR_ROUND_START')) {
     state.phase = phaseNamed('IN_ROUND')
+  }
+  res.json(state)
+})
+
+app.get('/round/restart', (req, res) => {
+  if (inPhase('ROUND_ENDED')) {
+    state.phase = phaseNamed('IN_ROUND')
+    state.players = GameState.randomPlayers()
   }
   res.json(state)
 })
@@ -64,7 +72,7 @@ app.get('/join/:player', (req, res) => {
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname+'/client/build/index.html'))
+  res.sendFile(path.join(__dirname+'/client/build/index.html'+suffix))
 })
 
 const port = process.env.PORT || 5000
