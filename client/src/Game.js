@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 // import moment from 'moment'
 
 import KeyHandler from 'react-key-handler'
-import background from './scifi.jpg'
+import background from './ispy.jpg'
 // import maskTile from './mask.png'
 // import blackTile from './blackTile.png'
 import './Game.css'

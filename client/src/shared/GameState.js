@@ -12,7 +12,7 @@ const Phases = [
 const InitialState = {
   phase: 0,
   board: {
-      image: 'foo.jpg',
+      image: 'ispy.jpg',
       gridSize: 10,
   },
   players: [
