@@ -7,7 +7,7 @@
   "name": "tunnel-vision-server",
   "version": "1.0.0",
   "engines": {
-    "node": "8.1.x"
+    "node": "8.6.x"
   },
   "description": "Server for Tunnel Vision game",
   "scripts": {
