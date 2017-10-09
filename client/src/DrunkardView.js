@@ -44,7 +44,10 @@ class DrunkardView extends Component {
     }
     if (this.props.phase === GameState.Phases.GAME_ENDED) {
       return (
-        <div className='DrunkardView'>game over! you { this.props.victory ? 'win' : 'lose' }</div>
+        <div className='DrunkardView'>
+          game over! you { this.props.victory ? 'win' : 'lose' }
+          <button onClick={this.props.resetGame}>again?</button>
+        </div>
       )
     }
     return (

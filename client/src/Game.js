@@ -129,7 +129,10 @@ class Game extends Component {
         <DebugView gameState={this.state} resetGame={this.resetGame.bind(this)}/>
         {
           (this.state.role === Roles.Undeclared) && (this.state.phase === GameState.Phases.IN_GAME) ?
-          <button onClick={this.resetGame.bind(this)}>New game</button>
+          <div className="Game-InProgress">
+            Game in progress!
+            <button onClick={this.resetGame.bind(this)}>End game</button>
+          </div>
           : null
         }
         {roleView({
@@ -139,6 +142,7 @@ class Game extends Component {
           moveDrunkard: this.moveDrunkard.bind(this),
           moveDriver: this.moveDriver.bind(this),
           pickup: this.pickup.bind(this),
+          resetGame: this.resetGame.bind(this),
         })}
       </div>
     )
