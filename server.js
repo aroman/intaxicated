@@ -20,7 +20,7 @@ const inPhase = phase => state.phase === phase
 app.use(express.static(path.join(__dirname, 'client/build')))
 
 app.get('/state', (req, res) => {
-  if (timeRemaining(ROUND_TIME, state.gameStartTime) === '0:00') {
+  if (state.phase === Phases.IN_GAME && timeRemaining(ROUND_TIME, state.gameStartTime) === '0:00') {
     state.phase = Phases.GAME_ENDED
   }
   res.json(state)

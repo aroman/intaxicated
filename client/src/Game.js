@@ -53,6 +53,7 @@ class Game extends Component {
     this.state = {
       // Local
       role: determineRole(),
+      isLoading: true,
 
       ...GameState.InitialState,
     }
@@ -66,7 +67,7 @@ class Game extends Component {
   }
 
   onNewGameState(nextGameState) {
-    this.setState({...nextGameState})
+    this.setState({...nextGameState, isLoading: false})
   }
 
   wrapAroundMove(coordinates, direction) {
@@ -117,6 +118,10 @@ class Game extends Component {
   }
 
   render() {
+    if (this.state.isLoading) {
+      return ''
+    }
+
     const viewForRole = role => {
       if (role === Roles.Driver) return DriverView
       if (role === Roles.Drunkard) return DrunkardView
@@ -132,6 +137,13 @@ class Game extends Component {
           <div className="Game-InProgress">
             Game in progress!
             <button onClick={this.resetGame.bind(this)}>End game</button>
+          </div>
+          : null
+        }
+        {
+          (this.state.role === Roles.Undeclared) && (this.state.phase === GameState.Phases.GAME_ENDED) ?
+          <div className="Game-InProgress">
+            <button onClick={this.resetGame.bind(this)}>New game</button>
           </div>
           : null
         }
