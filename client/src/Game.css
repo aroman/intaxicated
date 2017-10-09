@@ -3,7 +3,8 @@ html, body, #root {
   color: white;
   font-size: 50px;
   font-family: 'helvetica neue', 'helvetica';
-  background-color: #394052;
+  /*background-color: #394052;*/
+  background-color: black;
 }
 
 .Game {
@@ -15,7 +16,7 @@ html, body, #root {
 }
 
 button {
-  font-size: 40px;
+  font-size: 32px;
   border-radius: 10px;
   outline: 0;
   padding: 10px;
@@ -27,16 +28,19 @@ button {
 }
 
 button:hover {
-  border: 3px solid purple;
+  border: 3px solid red;
 }
 
 .Debug {
-  font-size: 12px;
+  font-size: 16px;
   position: absolute;
   font-family: monospace;
   top: 0;
-  left: 15px;
+  left: 0;
   max-width: 500px;
+  padding-right: 10px;
+  background-color: rgba(0,0,0,0.7);
+  /*border: 1px solid white;*/
 }
 
 .Debug-Phase {
@@ -44,14 +48,14 @@ button:hover {
   font-weight: bold;
 }
 
-.Title {
-  margin-top: 50px;
-  font-size: 50px;
-  margin-bottom: 40px;
+.Game-Title {
+  margin-top: 20px;
+  font-size: 40px;
+  margin-bottom: 30px;
   width: 100%;
   text-align: center;
-  padding-bottom: 10px;
-  border-bottom: 1px solid white;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #888;
 }
 
 .InRound {
@@ -85,7 +89,7 @@ button:hover {
   flex-direction: column;
 }
 
-.Grid-Image {
+.Grid-Map {
   width: 70%;
   height: 100%;
   z-index: 0;

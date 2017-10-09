@@ -1,69 +1,68 @@
-const moment = require('moment')
+// const moment = require('moment')
 const _ = require('lodash')
 
-const Phases = [
-  'WAIT_FOR_PLAYER_1',
-  'WAIT_FOR_PLAYER_2',
-  'WAIT_FOR_ROUND_START',
-  'IN_ROUND',
-  'ROUND_ENDED',
-]
+const MAP_SIZE = 10
+
+const Phases = {
+  WAIT_FOR_PLAYERS: 'WAIT_FOR_PLAYERS',
+  WAIT_FOR_ROUND_START: 'WAIT_FOR_ROUND_START',
+  IN_ROUND: 'IN_ROUND',
+  ROUND_ENDED: 'ROUND_ENDED',
+}
 
 const InitialState = {
-  phase: 0,
-  board: {
-      image: 'ispy.jpg',
-      gridSize: 10,
+  phase: Phases.WAIT_FOR_DRIVER,
+  driver: {
+    x: 0,
+    y: 0,
+    joined: false,
   },
-  players: [
-    {
-      x: 0,
-      y: 0,
-      inTurn: false,
-    },
-    {
-      x: 0,
-      y: 0,
-      inTurn: false,
-    },
-  ],
+  drunkard: {
+    x: 0,
+    y: 0,
+    joined: false,
+  },
 }
 
-function randomPlayers() {
-  const randomCoordinate = () => _.random(0, InitialState.board.gridSize - 1)
-  const randomizePlayers = () => InitialState.players.map(player => ({
-    ...player,
-    x: randomCoordinate(),
-    y: randomCoordinate(),
-  }))
-  const playersCloserThan = (a, b, n) => Math.abs(a.x - b.x) < n && Math.abs(a.y - b.y) < n
-  // Euclidean distance. Unclear which algorithm is better.
-  // const square = n => Math.pow(n, 2)
-  // const playersCloserThan = (a, b, n) => Math.sqrt(square(a.x - b.x) + square(a.y - b.y)) < n
-  const noPlayersCloserThan = (players, n) => (
-    players.some((a, i) => (
-      players.some((b, j) =>
-        i !== j && playersCloserThan(a, b, n)
-      )
-    ))
-  )
-  let players = randomizePlayers()
-  while (noPlayersCloserThan(players, 3)) {
-    players = randomizePlayers()
-  }
-  players[0].inTurn = true
-  return players
-}
+const randomCoordinate = () => _.random(0, MAP_SIZE - 1)
+
+//
+// function randomLocations() {
+//   const randomPlayers = () => .map(player => ({
+//     x: randomCoordinate(),
+//     y: randomCoordinate(),
+//   }))
+//   const playersCloserThan = (a, b, n) => Math.abs(a.x - b.x) < n && Math.abs(a.y - b.y) < n
+//   // Euclidean distance. Unclear which algorithm is better.
+//   // const square = n => Math.pow(n, 2)
+//   // const playersCloserThan = (a, b, n) => Math.sqrt(square(a.x - b.x) + square(a.y - b.y)) < n
+//   const noPlayersCloserThan = (players, n) => (
+//     players.some((a, i) => (
+//       players.some((b, j) =>
+//         i !== j && playersCloserThan(a, b, n)
+//       )
+//     ))
+//   )
+//   let players = randomizePlayers()
+//   while (noPlayersCloserThan(players, 3)) {
+//     players = randomizePlayers()
+//   }
+//   players[0].inTurn = true
+//   return players
+// }
 
 module.exports = {
 
-  InitialState,
+  MAP_SIZE,
 
-  randomPlayers,
+  InitialState,
 
   freshGameState: () => {
     let state = _.cloneDeep(InitialState)
-    state.players = randomPlayers()
+    state.driver.x = randomCoordinate()
+    state.driver.y = randomCoordinate()
+    state.drunkard.x = randomCoordinate()
+    state.drunkard.y = randomCoordinate()
     return state
   },
 
