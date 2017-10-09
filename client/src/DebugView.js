@@ -26,7 +26,7 @@ class DebugView extends Component {
         <KeyHandler
           keyEventName="keydown"
           keyValue='~'
-          onKeyHandle={this.reset.bind(this)}
+          onKeyHandle={this.props.resetGame}
         />
         <KeyHandler
           keyEventName="keydown"
@@ -36,7 +36,7 @@ class DebugView extends Component {
         {
           !this.state.enabled ? null :
           <div className="Debug">
-            <pre className="Debug-Phase">{this.props.gameState.phase}</pre>
+            <pre className="Debug-Phase">Status: {this.props.gameState.phase}</pre>
             <pre className="Debug-State">{JSON.stringify(this.props.gameState, null, 2)}</pre>
           </div>
         }

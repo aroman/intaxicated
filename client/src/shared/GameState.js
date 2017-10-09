@@ -15,6 +15,7 @@ const InitialState = {
     x: 0,
     y: 0,
     joined: false,
+    failedPickups: 0,
   },
   drunkard: {
     x: 0,

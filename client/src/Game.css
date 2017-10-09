@@ -1,18 +1,10 @@
 html, body, #root {
   height: 100%;
   color: white;
-  font-size: 50px;
+  font-size: 18px;
   font-family: 'helvetica neue', 'helvetica';
-  /*background-color: #394052;*/
-  background-color: black;
-}
-
-.Game {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex-direction: column;
-  height: 100%;
+  background-color: #394052;
+  /*background-color: black;*/
 }
 
 button {
@@ -28,55 +20,92 @@ button {
 }
 
 button:hover {
-  border: 3px solid red;
+  border: 3px solid #fdc805;
+}
+
+.Game {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  height: 100%;
+}
+
+.Game-Title {
+  margin-top: 20px;
+  font-size: 32px;
+  margin-bottom: 24px;
+  width: 100%;
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #888;
+  color: white;
+  text-decoration: none;
 }
 
 .Debug {
   font-size: 16px;
   position: absolute;
   font-family: monospace;
-  top: 0;
+  bottom: 0;
   left: 0;
   max-width: 500px;
   padding-right: 10px;
-  background-color: rgba(0,0,0,0.7);
-  /*border: 1px solid white;*/
+  padding-left: 10px;
+  background-color: rgba(0,0,0,0.5);
+  border-radius: 0 10px 0 0;
+  border-top: 1px solid white;
+  border-right: 1px solid white;
 }
 
 .Debug-Phase {
-  right: 0;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: bold;
-}
-
-.Game-Title {
-  margin-top: 20px;
-  font-size: 40px;
-  margin-bottom: 30px;
-  width: 100%;
-  text-align: center;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #888;
 }
 
 .DrunkardView {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 
 .DrunkardView-Tile {
-  width: 400%;
-  margin-left: -150%;
+  width: 250px;
+  margin: 20px;
 }
 
 .DriverView {
-  /*display: flex;
+  display: flex;
   align-items: center;
-  justify-content: center;*/
+  justify-content: center;
+  flex-direction: column;
+}
+
+.DriverView button {
+  font-size: 18px;
+}
+
+
+.DriverView-FailedPickups {
+  font-size: 24px;
+}
+
+.DriverView-FailedPickups-count {
+  font-weight: bold;
+  margin-left: 5px;
+  display: inline;
+}
+
+.DriverView-Controls {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-around;
+  margin: 10px;
 }
 
 .DriverView-Map {
-  margin: 0 auto;
+  margin: 10px auto;
   max-height: 70vh;
 }

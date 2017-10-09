@@ -32,25 +32,29 @@ class DrunkardView extends Component {
   }
 
   render() {
+    if (!this.props.drunkard.joined) {
+      return (
+        <button onClick={this.props.joinAsDrunkard}>Ready (drunkard)</button>
+      )
+    }
+    if (!this.props.driver.joined) {
+      return (
+        <div className='DrunkardView'>waiting for driver</div>
+      )
+    }
     return (
       <div className='DrunkardView'>
+        <div className='DrunkardView-Help'>controls: arrow keys = move</div>
+        <canvas className="DrunkardView-Tile" width="100" height="100" ref={canvas => this.canvas = canvas}/>
         {
-          this.props.drunkard.joined ?
-          <div>
-            {
-              ['Up', 'Down', 'Right', 'Left'].map(dir => (
-                <KeyHandler
-                  keyEventName="keydown"
-                  keyValue={`Arrow${dir}`}
-                  key={dir}
-                  onKeyHandle={event => event.preventDefault() || this.props.moveDrunkard(dir)}
-                />
-              ))
-            }
-            <canvas className="DrunkardView-Tile" width="100" height="100" ref={canvas => this.canvas = canvas}/>
-          </div>
-          :
-          <button onClick={this.props.joinAsDrunkard}>Ready (drunk)</button>
+          ['Up', 'Down', 'Right', 'Left'].map(dir => (
+            <KeyHandler
+              keyEventName="keydown"
+              keyValue={`Arrow${dir}`}
+              key={dir}
+              onKeyHandle={event => event.preventDefault() || this.props.moveDrunkard(dir)}
+            />
+          ))
         }
       </div>
     )

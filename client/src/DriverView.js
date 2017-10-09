@@ -5,39 +5,6 @@ import KeyHandler from 'react-key-handler'
 import GameState from './shared/GameState'
 import mapImageSrc from './map.png'
 
-// class Grid extends Component {
-//
-//   render() {
-//     const { position } = this.props
-//
-//     const isRevealed = (x, y) => (x === position.x && y === position.y)
-//     return (
-//       <div className="Grid">
-//         {
-//           _.range(rows).map(x => (
-//             <div className="Grid-Row" key={x}>
-//               {
-//                 _.range(cols).map(y => (
-//                     isRevealed(x,y) ?
-//                     <div
-//                       key={`${x},${y}`}
-//                       className='Grid-Square'
-//                       style={{width: imageWidth / rows, height: imageHeight / cols, background: 'unset'}} />
-//                     : <div
-//                       key={`${x},${y}`}
-//                       className='Grid-Square'
-//                       style={{width: imageWidth / rows, height: imageHeight / cols, background: 'black'}} />
-//                 ))
-//               }
-//             </div>
-//           ))
-//         }
-//       </div>
-//     )
-//   }
-// }
-
-
 class DriverView extends Component {
 
 constructor(props) {
@@ -69,32 +36,38 @@ constructor(props) {
         <button onClick={this.props.joinAsDriver}>Ready (driver)</button>
       )
     }
+    if (!this.props.drunkard.joined) {
+      return (
+        <div className='DriverView'>waiting for drunkard</div>
+      )
+    }
     return (
       <div className='DriverView'>
+        <div className='DriverView-Controls'>
+          <div className='DriverView-FailedPickups'>
+            Failed pickups:
+            <div className='DriverView-FailedPickups-count'>{this.props.driver.failedPickups}</div>
+          </div>
+          <button onClick={this.props.pickup}>Attempt pick-up</button>
+        </div>
+        <div className='DriverView-Help'>controls: arrow keys = move, spacebar = attempt pick-up</div>
+        <canvas className="DriverView-Map" width="1000" height="1000" ref={canvas => this.canvas = canvas}/>
+
         {
-          this.props.drunkard.joined ?
-          <div>
-            {
-              ['Up', 'Down', 'Right', 'Left'].map(dir => (
-                <KeyHandler
-                  keyEventName="keydown"
-                  keyValue={`Arrow${dir}`}
-                  key={dir}
-                  onKeyHandle={event => event.preventDefault() || this.props.moveDriver(dir)}
-                />
-              ))
-            }
+          ['Up', 'Down', 'Right', 'Left'].map(dir => (
             <KeyHandler
               keyEventName="keydown"
-              keyValue={' '}
-              onKeyHandle={event => event.preventDefault() || this.props.pickup()}
+              keyValue={`Arrow${dir}`}
+              key={dir}
+              onKeyHandle={event => event.preventDefault() || this.props.moveDriver(dir)}
             />
-            <canvas className="DriverView-Map" width="1000" height="1000" ref={canvas => this.canvas = canvas}/>
-            {/* <Grid position={{x: 3, y: 3}} /> */}
-          </div>
-          :
-          <div>waiting for drunkard</div>
+          ))
         }
+        <KeyHandler
+          keyEventName="keydown"
+          keyValue={' '}
+          onKeyHandle={event => event.preventDefault() || this.props.pickup()}
+        />
       </div>
     )
   }

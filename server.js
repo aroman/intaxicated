@@ -44,6 +44,8 @@ app.get('/pickup', (req, res) => {
   if (state.drunkard.x === state.driver.x && state.driver.y === state.drunkard.y) {
     state.phase = Phases.GAME_ENDED
     state.victory = true
+  } else {
+    state.driver.failedPickups += 1
   }
   res.json(state)
 })

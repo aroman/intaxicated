@@ -125,8 +125,8 @@ class Game extends Component {
     const roleView = React.createFactory(viewForRole(this.state.role))
     return (
       <div className="Game">
-        <div className="Game-Title">Drunk Uber Simulator™</div>
-        <DebugView gameState={this.state}/>
+        <a className="Game-Title" href="/">Drunk Uber Simulator™</a>
+        <DebugView gameState={this.state} resetGame={this.resetGame.bind(this)}/>
         {
           (this.state.role === Roles.Undeclared) && (this.state.phase === GameState.Phases.IN_GAME) ?
           <button onClick={this.resetGame.bind(this)}>New game</button>
