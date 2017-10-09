@@ -84,6 +84,11 @@ class Game extends Component {
     return {x, y}
   }
 
+  pickup() {
+    fetchServer('pickup')
+    .then(gameState => this.onNewGameState(gameState))
+  }
+
   moveDrunkard(direction) {
     let {x, y} = this.wrapAroundMove(this.state.drunkard, direction)
     fetchServer(`move/drunkard/${x}/${y}`)
@@ -133,6 +138,7 @@ class Game extends Component {
           joinAsDriver: this.joinAsDriver.bind(this),
           moveDrunkard: this.moveDrunkard.bind(this),
           moveDriver: this.moveDriver.bind(this),
+          pickup: this.pickup.bind(this),
         })}
       </div>
     )

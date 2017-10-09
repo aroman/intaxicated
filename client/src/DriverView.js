@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 // import _ from 'lodash'
 import KeyHandler from 'react-key-handler'
 
-import map from './map.png'
+import GameState from './shared/GameState'
+import mapImageSrc from './map.png'
 
 // class Grid extends Component {
 //
@@ -39,6 +40,29 @@ import map from './map.png'
 
 class DriverView extends Component {
 
+constructor(props) {
+  super(props)
+  this.mapImage = new Image()
+  this.mapImage.src = mapImageSrc
+}
+
+  componentDidUpdate() {
+    this.updateMap()
+  }
+
+  updateMap() {
+    if (!this.canvas) return
+    const context = this.canvas.getContext('2d')
+    context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    context.drawImage(this.mapImage, 0, 0)
+    const tileSize = this.mapImage.width / GameState.MAP_SIZE
+    context.beginPath()
+    context.rect(this.props.driver.x * tileSize, this.props.driver.y * tileSize, tileSize, tileSize)
+    context.strokeStyle = 'red'
+    context.lineWidth = 5
+    context.stroke()
+  }
+
   render() {
     if (!this.props.driver.joined) {
       return (
@@ -60,7 +84,12 @@ class DriverView extends Component {
                 />
               ))
             }
-            <img className="Grid-Map" alt="" src={map} />
+            <KeyHandler
+              keyEventName="keydown"
+              keyValue={' '}
+              onKeyHandle={event => event.preventDefault() || this.props.pickup()}
+            />
+            <canvas className="DriverView-Map" width="1000" height="1000" ref={canvas => this.canvas = canvas}/>
             {/* <Grid position={{x: 3, y: 3}} /> */}
           </div>
           :

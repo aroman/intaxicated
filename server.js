@@ -40,6 +40,14 @@ app.get('/move/drunkard/:x/:y', (req, res) => {
   res.json(state)
 })
 
+app.get('/pickup', (req, res) => {
+  if (state.drunkard.x === state.driver.x && state.driver.y === state.drunkard.y) {
+    state.phase = Phases.GAME_ENDED
+    state.victory = true
+  }
+  res.json(state)
+})
+
 app.get('/join/driver', (req, res) => {
   state.driver.joined = true
   if (state.drunkard.joined && state.driver.joined) {

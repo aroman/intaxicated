@@ -21,6 +21,7 @@ const InitialState = {
     y: 0,
     joined: false,
   },
+  victory: false,
 }
 
 const randomCoordinate = () => _.random(0, MAP_SIZE - 1)
