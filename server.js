@@ -1,6 +1,6 @@
 const express = require('express')
 const path = require('path')
-const {Phases, freshGameState} = require('./client/src/shared/GameState.js')
+const {Phases, freshGameState, timeRemaining, ROUND_TIME} = require('./client/src/shared/GameState.js')
 
 const app = express()
 
@@ -20,6 +20,9 @@ const inPhase = phase => state.phase === phase
 app.use(express.static(path.join(__dirname, 'client/build')))
 
 app.get('/state', (req, res) => {
+  if (timeRemaining(ROUND_TIME, state.gameStartTime) === '0:00') {
+    state.phase = Phases.GAME_ENDED
+  }
   res.json(state)
 })
 
@@ -54,6 +57,7 @@ app.get('/join/driver', (req, res) => {
   state.driver.joined = true
   if (state.drunkard.joined && state.driver.joined) {
     state.phase = Phases.IN_GAME
+    state.gameStartTime = Date.now()
   }
   res.json(state)
 })
@@ -62,6 +66,7 @@ app.get('/join/drunkard', (req, res) => {
   state.drunkard.joined = true
   if (state.drunkard.joined && state.driver.joined) {
     state.phase = Phases.IN_GAME
+    state.gameStartTime = Date.now()
   }
   res.json(state)
 })

@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-// import _ from 'lodash'
 import KeyHandler from 'react-key-handler'
 
 import GameState from './shared/GameState'
@@ -41,14 +40,29 @@ constructor(props) {
         <div className='DriverView'>waiting for drunkard</div>
       )
     }
+    if (this.props.phase === GameState.Phases.GAME_ENDED) {
+      return (
+        <div className='DriverView'>game over! you { this.props.victory ? 'win' : 'lose' }</div>
+      )
+    }
     return (
       <div className='DriverView'>
         <div className='DriverView-Controls'>
-          <div className='DriverView-FailedPickups'>
-            Failed pickups:
-            <div className='DriverView-FailedPickups-count'>{this.props.driver.failedPickups}</div>
+          <div className='DriverView-Controls-Row'>
           </div>
-          <button onClick={this.props.pickup}>Attempt pick-up</button>
+          <div className='DriverView-Controls-Row'>
+            <div className='DriverView-FailedPickups'>
+              Failed pickups:
+              <div className='DriverView-FailedPickups-count'>{this.props.driver.failedPickups}</div>
+            </div>
+            <button onClick={this.props.pickup}>Attempt pick-up</button>
+          </div>
+          <div className='DriverView-Controls-Row'>
+            <div className='DriverView-Timer'>
+              Time remaining:
+              <div className='DriverView-Timer-time'>{GameState.timeRemaining(GameState.ROUND_TIME, this.props.gameStartTime)}</div>
+            </div>
+          </div>
         </div>
         <div className='DriverView-Help'>controls: arrow keys = move, spacebar = attempt pick-up</div>
         <canvas className="DriverView-Map" width="1000" height="1000" ref={canvas => this.canvas = canvas}/>

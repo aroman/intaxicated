@@ -1,7 +1,8 @@
-// const moment = require('moment')
+const moment = require('moment')
 const _ = require('lodash')
 
 const MAP_SIZE = 10
+const ROUND_TIME = 5 // minutes
 
 const Phases = {
   WAIT_FOR_PLAYERS: 'WAIT_FOR_PLAYERS',
@@ -23,6 +24,7 @@ const InitialState = {
     joined: false,
   },
   victory: false,
+  gameStartTime: 0,
 }
 
 const randomCoordinate = () => _.random(0, MAP_SIZE - 1)
@@ -54,7 +56,18 @@ const randomCoordinate = () => _.random(0, MAP_SIZE - 1)
 
 module.exports = {
 
+  timeRemaining: (minutes, epoch) => {
+    const now = moment().subtract(minutes, 'minutes')
+    const then = moment(epoch)
+    const remaining = moment.utc(then.diff(now))
+    if (remaining.minutes() > minutes) {
+      return '0:00'
+    }
+    return remaining.format('m:ss')
+  },
+
   MAP_SIZE,
+  ROUND_TIME,
 
   InitialState,
 

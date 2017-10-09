@@ -75,6 +75,28 @@ button:hover {
   margin: 20px;
 }
 
+.DrunkardView-Controls {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+  flex-direction: column;
+  width: 100%;
+  font-size: 22px;
+}
+
+.DrunkardView-Controls-Row {
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+  justify-content: center;
+}
+
+.DrunkardView-Timer-time {
+  font-weight: bold;
+  margin-left: 5px;
+  display: inline;
+}
+
 .DriverView {
   display: flex;
   align-items: center;
@@ -83,12 +105,7 @@ button:hover {
 }
 
 .DriverView button {
-  font-size: 18px;
-}
-
-
-.DriverView-FailedPickups {
-  font-size: 24px;
+  font-size: 22px;
 }
 
 .DriverView-FailedPickups-count {
@@ -100,9 +117,23 @@ button:hover {
 .DriverView-Controls {
   display: flex;
   align-items: center;
-  width: 100%;
-  justify-content: space-around;
   margin: 10px;
+  flex-direction: column;
+  width: 100%;
+  font-size: 22px;
+}
+
+.DriverView-Controls-Row {
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.DriverView-Timer-time {
+  font-weight: bold;
+  margin-left: 5px;
+  display: inline;
 }
 
 .DriverView-Map {

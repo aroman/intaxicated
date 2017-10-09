@@ -42,8 +42,21 @@ class DrunkardView extends Component {
         <div className='DrunkardView'>waiting for driver</div>
       )
     }
+    if (this.props.phase === GameState.Phases.GAME_ENDED) {
+      return (
+        <div className='DrunkardView'>game over! you { this.props.victory ? 'win' : 'lose' }</div>
+      )
+    }
     return (
       <div className='DrunkardView'>
+        <div className='DrunkardView-Controls'>
+          <div className='DrunkardView-Controls-Row'>
+            <div className='DrunkardView-Timer'>
+              Time remaining:
+              <div className='DrunkardView-Timer-time'>{GameState.timeRemaining(GameState.ROUND_TIME, this.props.gameStartTime)}</div>
+            </div>
+          </div>
+        </div>
         <div className='DrunkardView-Help'>controls: arrow keys = move</div>
         <canvas className="DrunkardView-Tile" width="100" height="100" ref={canvas => this.canvas = canvas}/>
         {
