@@ -5,13 +5,12 @@ const MAP_SIZE = 10
 
 const Phases = {
   WAIT_FOR_PLAYERS: 'WAIT_FOR_PLAYERS',
-  WAIT_FOR_ROUND_START: 'WAIT_FOR_ROUND_START',
-  IN_ROUND: 'IN_ROUND',
-  ROUND_ENDED: 'ROUND_ENDED',
+  IN_GAME: 'IN_GAME',
+  GAME_ENDED: 'GAME_ENDED',
 }
 
 const InitialState = {
-  phase: Phases.WAIT_FOR_DRIVER,
+  phase: Phases.WAIT_FOR_PLAYERS,
   driver: {
     x: 0,
     y: 0,

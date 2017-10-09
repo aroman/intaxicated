@@ -71,7 +71,12 @@ class Game extends Component {
 
   wrapAroundMove(coordinates, direction) {
     let {x, y} = coordinates
-    const wrapAround = z => z % GameState.MAP_SIZE
+    // Wrap around coodinates
+    const wrapAround = z => {
+      if (z >= GameState.MAP_SIZE) return GameState.MAP_SIZE - z
+      if (z < 0) return GameState.MAP_SIZE - 1
+      return z
+    }
     if (direction === 'Up') y = wrapAround(y - 1)
     if (direction === 'Down') y = wrapAround(y + 1)
     if (direction === 'Right') x = wrapAround(x + 1)
@@ -101,8 +106,8 @@ class Game extends Component {
     .then(gameState => this.onNewGameState(gameState))
   }
 
-  startRound() {
-    fetchServer('round/start')
+  resetGame() {
+    fetchServer('reset')
     .then(gameState => this.onNewGameState(gameState))
   }
 
@@ -117,7 +122,18 @@ class Game extends Component {
       <div className="Game">
         <div className="Game-Title">Drunk Uber Simulator™</div>
         <DebugView gameState={this.state}/>
-        { roleView ({...this.state}) }
+        {
+          (this.state.role === Roles.Undeclared) && (this.state.phase === GameState.Phases.IN_GAME) ?
+          <button onClick={this.resetGame.bind(this)}>New game</button>
+          : null
+        }
+        {roleView({
+          ...this.state,
+          joinAsDrunkard: this.joinAsDrunkard.bind(this),
+          joinAsDriver: this.joinAsDriver.bind(this),
+          moveDrunkard: this.moveDrunkard.bind(this),
+          moveDriver: this.moveDriver.bind(this),
+        })}
       </div>
     )
   }

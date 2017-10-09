@@ -8,6 +8,13 @@ const app = express()
 let state = freshGameState()
 
 const inPhase = phase => state.phase === phase
+// const nextState = curState => {
+//   if (curState.phase === Phases.WAIT_FOR_PLAYERS) {
+//     if (curState.drunkard.joined && curState.driver.join) {
+//       next
+//     }
+//   }
+// }
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')))
@@ -18,13 +25,6 @@ app.get('/state', (req, res) => {
 
 app.get('/reset', (req, res) => {
   state = freshGameState()
-  res.json(state)
-})
-
-app.get('/round/start', (req, res) => {
-  if (inPhase(Phases.WAIT_FOR_ROUND_START)) {
-    state.phase = Phases.IN_ROUND
-  }
   res.json(state)
 })
 
@@ -43,7 +43,7 @@ app.get('/move/drunkard/:x/:y', (req, res) => {
 app.get('/join/driver', (req, res) => {
   state.driver.joined = true
   if (state.drunkard.joined && state.driver.joined) {
-    state.phase = Phases.WAIT_FOR_ROUND_START
+    state.phase = Phases.IN_GAME
   }
   res.json(state)
 })
@@ -51,7 +51,7 @@ app.get('/join/driver', (req, res) => {
 app.get('/join/drunkard', (req, res) => {
   state.drunkard.joined = true
   if (state.drunkard.joined && state.driver.joined) {
-    state.phase = Phases.WAIT_FOR_ROUND_START
+    state.phase = Phases.IN_GAME
   }
   res.json(state)
 })
