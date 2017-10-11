@@ -7,7 +7,7 @@ class DebugView extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      enabled: true,
+      enabled: false,
     }
   }
 

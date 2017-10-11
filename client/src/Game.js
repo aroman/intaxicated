@@ -11,6 +11,8 @@ import DriverView from './DriverView'
 import DebugView from './DebugView'
 import UndeclaredView from './UndeclaredView'
 
+import Logo from './logo.svg'
+
 // How frequently we poll the server for changes
 const POLL_FREQUENCY = 1000 // ms
 const POLL_TIMEOUT = 1500 // ms
@@ -130,7 +132,6 @@ class Game extends Component {
     const roleView = React.createFactory(viewForRole(this.state.role))
     return (
       <div className="Game">
-        <a className="Game-Title" href="/">Drunk Uber Simulator™</a>
         <DebugView gameState={this.state} resetGame={this.resetGame.bind(this)}/>
         {
           (this.state.role === Roles.Undeclared) && (this.state.phase === GameState.Phases.IN_GAME) ?
@@ -143,7 +144,7 @@ class Game extends Component {
         {
           (this.state.role === Roles.Undeclared) && (this.state.phase === GameState.Phases.GAME_ENDED) ?
           <div className="Game-InProgress">
-            <button onClick={this.resetGame.bind(this)}>New game</button>
+              <button onClick={this.resetGame.bind(this)}>New game</button>
           </div>
           : null
         }
@@ -156,6 +157,14 @@ class Game extends Component {
           pickup: this.pickup.bind(this),
           resetGame: this.resetGame.bind(this),
         })}
+        <div className="Footer">
+          <div className="Footer-Links">
+            <a href="#">Terms</a>
+            <a href="#">Privacy</a>
+            <a href="#">Investors</a>
+          </div>
+          &copy; 2017 Drunk Ride Sharing
+        </div>
       </div>
     )
   }

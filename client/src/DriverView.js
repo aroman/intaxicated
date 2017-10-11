@@ -19,13 +19,17 @@ constructor(props) {
   updateMap() {
     if (!this.canvas) return
     const context = this.canvas.getContext('2d')
-    context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    const outlineOffset = context.lineWidth / 2
     context.drawImage(this.mapImage, 0, 0)
     const tileSize = this.mapImage.width / GameState.MAP_SIZE
     context.beginPath()
-    context.rect(this.props.driver.x * tileSize, this.props.driver.y * tileSize, tileSize, tileSize)
-    context.strokeStyle = 'red'
     context.lineWidth = 5
+    context.rect(
+      outlineOffset + this.props.driver.x * tileSize,
+      outlineOffset + this.props.driver.y * tileSize,
+      tileSize, tileSize
+    )
+    context.strokeStyle = 'red'
     context.stroke()
   }
 
