@@ -32,6 +32,7 @@ app.get('/reset', (req, res) => {
 })
 
 app.get('/move/driver/:x/:y', (req, res) => {
+  state.attemptingPickup = false
   state.driver.x = Number(req.params.x)
   state.driver.y = Number(req.params.y)
   res.json(state)
@@ -43,7 +44,15 @@ app.get('/move/drunkard/:x/:y', (req, res) => {
   res.json(state)
 })
 
-app.get('/pickup', (req, res) => {
+app.get('/pickup/attempt', (req, res) => {
+  state.attemptingPickup = true
+  res.json(state)
+})
+
+app.get('/pickup/confirm', (req, res) => {
+  if (!state.attemptingPickup) {
+    return res.json(state)
+  }
   if (state.drunkard.x === state.driver.x && state.driver.y === state.drunkard.y) {
     state.phase = Phases.GAME_ENDED
     state.victory = true
@@ -55,6 +64,7 @@ app.get('/pickup', (req, res) => {
       state.victory = false
     }
   }
+  state.attemptingPickup = false
   res.json(state)
 })
 

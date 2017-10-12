@@ -25,6 +25,7 @@ const InitialState = {
     joined: false,
   },
   victory: false,
+  attemptingPickup: false,
   gameStartTime: 0,
 }
 

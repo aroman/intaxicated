@@ -82,6 +82,7 @@ class Game extends Component {
   }
 
   onNewGameState(nextGameState) {
+    if (!nextGameState) return
     this.setState({gameState: nextGameState, isLoading: false})
   }
 
@@ -115,8 +116,13 @@ class Game extends Component {
     return {x, y}
   }
 
-  pickup() {
-    fetchServer('pickup')
+  attemptPickup() {
+    fetchServer('pickup/attempt')
+    .then(gameState => this.onNewGameState(gameState))
+  }
+
+  confirmPickup() {
+    fetchServer('pickup/confirm')
     .then(gameState => this.onNewGameState(gameState))
   }
 
@@ -187,7 +193,8 @@ class Game extends Component {
           joinAsDriver: this.joinAsDriver.bind(this),
           moveDrunkard: _.debounce(this.moveDrunkard.bind(this), 100),
           moveDriver: this.moveDriver.bind(this),
-          pickup: this.pickup.bind(this),
+          attemptPickup: this.attemptPickup.bind(this),
+          confirmPickup: this.confirmPickup.bind(this),
           resetGame: this.resetGame.bind(this),
         })}
         <div className="Footer">

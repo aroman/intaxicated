@@ -187,8 +187,7 @@ button:hover {
   width: 250px;
   margin: 20px;
   animation: teeter 3s ease-in-out 3s infinite alternate, blurry 10s ease 0s infinite alternate;
-  margin-top: 100px;
-
+  margin-top: 75px;
 }
 
 .DrunkardView-Controls {
@@ -202,9 +201,15 @@ button:hover {
 
 .DrunkardView-Controls-Row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   width: 100%;
   justify-content: center;
+}
+
+.DrunkardView-Controls-Row button {
+  margin-top: 20px;
+  font-size: 20px;
+  margin-bottom: 20px;
 }
 
 .DrunkardView-Timer-time {

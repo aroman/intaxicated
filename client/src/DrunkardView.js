@@ -99,6 +99,12 @@ class DrunkardView extends Component {
               <div className='DrunkardView-Timer-time'>{GameState.timeRemaining(GameState.ROUND_TIME, this.props.gameStartTime)}</div>
             </div>
           </div>
+          <div className='DrunkardView-Controls-Row'>
+            {
+              !this.props.attemptingPickup ? null :
+              <button onClick={this.props.confirmPickup}>Confirm pick-up</button>
+            }
+          </div>
         </div>
         <div className='DrunkardView-Help'>use <strong>arrow keys</strong> to move</div>
         <canvas className="DrunkardView-Tile" width="500" height="500" ref={canvas => this.canvas = canvas}/>
