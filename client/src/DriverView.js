@@ -4,17 +4,20 @@ import _ from 'lodash'
 
 import GameState from './shared/GameState'
 import mapImageSrc from './map.svg'
+import carImageSrc from './car.png'
 import WinLoseView from './WinLoseView'
 import moment from 'moment'
 // import iphoneSrc from './iphone.png'
 
-import { getValidDirections } from './MapUtils'
+// import { getValidDirections } from './MapUtils'
 
 class DriverView extends Component {
 
   constructor(props) {
     super(props)
     this.mapImage = new Image()
+    this.carImage = new Image()
+    this.carImage.src = carImageSrc
     this.mapImage.src = mapImageSrc
     this.lastMoved = moment()
   }
@@ -37,12 +40,6 @@ class DriverView extends Component {
     const outlineOffset = context.lineWidth / 4
     context.drawImage(this.mapImage, 0, 0, this.canvas.height, this.canvas.width)
 
-    const validDirections = getValidDirections(
-      this.mapImage,
-      this.props.driver.x,
-      this.props.driver.y
-    )
-
     // Draw outline around current tile
     context.beginPath()
     const tileSize = this.canvas.height / GameState.MAP_SIZE
@@ -52,7 +49,11 @@ class DriverView extends Component {
       tileSize,
       tileSize
     )
-    context.strokeStyle = validDirections.up ? 'green' : 'red'
+    context.drawImage(this.carImage,
+      this.props.driver.x * tileSize + (tileSize / 6),
+      this.props.driver.y * tileSize + (tileSize / 6)
+    )
+    context.strokeStyle = this.canMove() ? '#85FF00' : '#FF0000'
     context.stroke()
   }
 

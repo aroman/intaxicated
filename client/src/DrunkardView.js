@@ -24,6 +24,12 @@ class DrunkardView extends Component {
     if (!this.stumbleTimer) {
       this.stumbleTimer = setInterval(this.stumbleIfNeeded.bind(this), 100)
     }
+    this.handicaps = {
+      teeter: true,
+      vomit: false,
+      colorblind: false,
+      reverse: false,
+    }
   }
 
   componentWillUnmount() {
@@ -36,7 +42,6 @@ class DrunkardView extends Component {
   }
 
   stumbleIfNeeded() {
-    // console.log((moment() - this.timeLastMoved))
     if ((moment() - this.timeLastMoved) > STUMBLE_TIME) {
       this.move(chooseRandomElement(DIRECTIONS))
     }
@@ -58,10 +63,12 @@ class DrunkardView extends Component {
     const destHeight = this.canvas.height
     const destX = 0
     const destY = 0
+    // context.filter = 'grayscale(100%)';
     context.drawImage(this.mapImage, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight)
   }
 
   render() {
+
     // console.log(this.props)
     if (!this.props.drunkard.joined) {
       return (
