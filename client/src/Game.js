@@ -1,6 +1,6 @@
 // import 'moment-duration-format'
 // import classNames from 'class-names'
-// import _ from 'lodash'
+import _ from 'lodash'
 import React, { Component } from 'react'
 // import moment from 'moment'
 import './Game.css'
@@ -11,10 +11,17 @@ import DriverView from './DriverView'
 import DebugView from './DebugView'
 import UndeclaredView from './UndeclaredView'
 
+import { getValidDirections } from './MapUtils'
+
+import mapImageSrc from './map.png'
 import Logo from './logo.svg'
 
+function imgLoaded(imgElement) {
+  return imgElement.complete && imgElement.naturalHeight !== 0;
+}
+
 // How frequently we poll the server for changes
-const POLL_FREQUENCY = 1000 // ms
+const POLL_FREQUENCY = 500 // ms
 const POLL_TIMEOUT = 1500 // ms
 
 const Roles = {
@@ -52,16 +59,22 @@ class Game extends Component {
       return Roles.Undeclared
     }
 
+    this.mapImage = new Image()
+    this.mapImage.src = mapImageSrc
+
     this.state = {
-      // Local
       role: determineRole(),
       isLoading: true,
-
-      ...GameState.InitialState,
+      gameState: GameState.InitialState,
     }
     this.onPollTimer()
     setInterval(this.onPollTimer.bind(this), POLL_FREQUENCY)
   }
+
+  // optimization not necessary based on timing
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return ! _.isEqual(nextState.gameState, this.state.gameState)
+  // }
 
   onPollTimer() {
     fetchServer('state')
@@ -69,11 +82,26 @@ class Game extends Component {
   }
 
   onNewGameState(nextGameState) {
-    this.setState({...nextGameState, isLoading: false})
+    this.setState({gameState: nextGameState, isLoading: false})
   }
 
-  wrapAroundMove(coordinates, direction) {
+  canMoveInDirection(coordinates, direction) {
+    console.time('canMoveInDirection')
     let {x, y} = coordinates
+    const validDirections = getValidDirections(this.mapImage, x, y)
+    console.timeEnd('canMoveInDirection')
+    return validDirections[direction]
+  }
+
+  wrapAroundMove(coordinates, direction, options) {
+    let {x, y} = coordinates
+    // Ensure staying on road if needed
+    if (options.stayOnRoad && options.stayOnRoad === true) {
+      console.log('stayOnRoad')
+      if (!this.canMoveInDirection(coordinates, direction)) {
+        return {x, y}
+      }
+    }
     // Wrap around coodinates
     const wrapAround = z => {
       if (z >= GameState.MAP_SIZE) return GameState.MAP_SIZE - z
@@ -93,13 +121,21 @@ class Game extends Component {
   }
 
   moveDrunkard(direction) {
-    let {x, y} = this.wrapAroundMove(this.state.drunkard, direction)
+    let {x, y} = this.wrapAroundMove(
+      this.state.gameState.drunkard,
+      direction,
+      { stayOnRoad: false }
+    )
     fetchServer(`move/drunkard/${x}/${y}`)
     .then(gameState => this.onNewGameState(gameState))
   }
 
   moveDriver(direction) {
-    let {x, y} = this.wrapAroundMove(this.state.driver, direction)
+    let {x, y} = this.wrapAroundMove(
+      this.state.gameState.driver,
+      direction,
+      { stayOnRoad: true }
+    )
     fetchServer(`move/driver/${x}/${y}`)
     .then(gameState => this.onNewGameState(gameState))
   }
@@ -120,7 +156,7 @@ class Game extends Component {
   }
 
   render() {
-    if (this.state.isLoading) {
+    if (this.state.isLoading || ! imgLoaded(this.mapImage)) {
       return ''
     }
 
@@ -145,11 +181,12 @@ class Game extends Component {
           : null
         }
         {roleView({
-          ...this.state,
+          role: this.state.role,
+          ...this.state.gameState,
           joinAsDrunkard: this.joinAsDrunkard.bind(this),
           joinAsDriver: this.joinAsDriver.bind(this),
-          moveDrunkard: this.moveDrunkard.bind(this),
-          moveDriver: this.moveDriver.bind(this),
+          moveDrunkard: _.debounce(this.moveDrunkard.bind(this), 100),
+          moveDriver: _.debounce(this.moveDriver.bind(this), 100),
           pickup: this.pickup.bind(this),
           resetGame: this.resetGame.bind(this),
         })}

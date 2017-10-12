@@ -10,6 +10,7 @@ class DrunkardView extends Component {
     super(props)
     this.mapImage = new Image()
     this.mapImage.src = mapImageSrc
+    console.log(props)
   }
 
   componentDidUpdate() {
@@ -62,7 +63,7 @@ class DrunkardView extends Component {
             </div>
           </div>
         </div>
-        <div className='DrunkardView-Help'>controls: arrow keys = move</div>
+        <div className='DrunkardView-Help'>use <strong>arrow keys</strong> to move</div>
         <canvas className="DrunkardView-Tile" width="200" height="200" ref={canvas => this.canvas = canvas}/>
         {
           ['Up', 'Down', 'Right', 'Left'].map(dir => (

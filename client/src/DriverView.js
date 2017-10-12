@@ -3,15 +3,21 @@ import KeyHandler from 'react-key-handler'
 
 import GameState from './shared/GameState'
 import mapImageSrc from './map.png'
-import iphoneSrc from './iphone.png'
+// import iphoneSrc from './iphone.png'
+
+import { getValidDirections } from './MapUtils'
 
 class DriverView extends Component {
 
-constructor(props) {
-  super(props)
-  this.mapImage = new Image()
-  this.mapImage.src = mapImageSrc
-}
+  constructor(props) {
+    super(props)
+    this.mapImage = new Image()
+    this.mapImage.src = mapImageSrc
+  }
+
+  componentDidMount() {
+    this.updateMap()
+  }
 
   componentDidUpdate() {
     this.updateMap()
@@ -19,18 +25,30 @@ constructor(props) {
 
   updateMap() {
     if (!this.canvas) return
+    if (this.mapImage.height !== this.mapImage.width) {
+      console.log('invalid map dimensions')
+    }
     const context = this.canvas.getContext('2d')
-    const outlineOffset = context.lineWidth / 2
+    const outlineOffset = context.lineWidth / 4
     context.drawImage(this.mapImage, 0, 0, this.canvas.height, this.canvas.width)
-    const tileSize = this.canvas.height / GameState.MAP_SIZE
-    context.beginPath()
-    context.lineWidth = 5
-    context.rect(
-      outlineOffset + this.props.driver.x * tileSize,
-      outlineOffset + this.props.driver.y * tileSize,
-      tileSize, tileSize
+
+    const validDirections = getValidDirections(
+      this.mapImage,
+      this.props.driver.x,
+      this.props.driver.y
     )
-    context.strokeStyle = 'red'
+
+    // Draw outline around current tile
+    context.beginPath()
+    const tileSize = this.canvas.height / GameState.MAP_SIZE
+    context.rect(
+      outlineOffset + this.props.driver.x * tileSize - 2,
+      outlineOffset + this.props.driver.y * tileSize,
+      tileSize,
+      tileSize
+    )
+    context.lineWidth = 6
+    context.strokeStyle = validDirections.up ? 'green' : 'red'
     context.stroke()
   }
 
@@ -74,7 +92,7 @@ constructor(props) {
             </div>
           </div>
         </div>
-        <div className='DriverView-Help'>controls: arrow keys = move, spacebar = attempt pick-up</div>
+        <div className='DriverView-Help'><strong>arrow keys</strong> to move | <strong>spacebar</strong> to attempt pick-up</div>
         {/* <div className='DriverView-Chasis' src={iphoneSrc}/> */}
         <canvas className="DriverView-Map" width="1000" height="1000" ref={canvas => this.canvas = canvas}/>
         {
