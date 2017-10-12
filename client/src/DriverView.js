@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import KeyHandler from 'react-key-handler'
 
 import GameState from './shared/GameState'
-import mapImageSrc from './map.png'
+import mapImageSrc from './map.svg'
+import WinLoseView from './WinLoseView'
 // import iphoneSrc from './iphone.png'
 
 import { getValidDirections } from './MapUtils'
@@ -29,6 +30,7 @@ class DriverView extends Component {
       console.log('invalid map dimensions')
     }
     const context = this.canvas.getContext('2d')
+    context.lineWidth = 6
     const outlineOffset = context.lineWidth / 4
     context.drawImage(this.mapImage, 0, 0, this.canvas.height, this.canvas.width)
 
@@ -47,7 +49,6 @@ class DriverView extends Component {
       tileSize,
       tileSize
     )
-    context.lineWidth = 6
     context.strokeStyle = validDirections.up ? 'green' : 'red'
     context.stroke()
   }
@@ -60,19 +61,19 @@ class DriverView extends Component {
         </div>
       )
     }
+
     if (!this.props.drunkard.joined) {
       return (
         <div className='DriverView'>waiting for drunkard</div>
       )
     }
+
     if (this.props.phase === GameState.Phases.GAME_ENDED) {
       return (
-        <div className='DriverView'>
-          game over! you { this.props.victory ? 'win' : 'lose' }
-          <button onClick={this.props.resetGame}>again?</button>
-        </div>
+        <WinLoseView resetGame={this.props.resetGame} victory={this.props.victory}/>
       )
     }
+
     return (
       <div className='DriverView'>
         <div className='DriverView-Controls'>

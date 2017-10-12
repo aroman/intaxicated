@@ -13,7 +13,7 @@ import UndeclaredView from './UndeclaredView'
 
 import { getValidDirections } from './MapUtils'
 
-import mapImageSrc from './map.png'
+import mapImageSrc from './map.svg'
 import Logo from './logo.svg'
 
 function imgLoaded(imgElement) {
@@ -196,7 +196,7 @@ class Game extends Component {
             <a href="#">Privacy</a>
             <a href="#">Investors</a>
           </div>
-          &copy; 2017 Drunk Ride Sharing
+          &copy; 2017 Intaxicated. Please don't drink and drive.
         </div>
       </div>
     )

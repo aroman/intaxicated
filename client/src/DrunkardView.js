@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import KeyHandler from 'react-key-handler'
 
+import WinLoseView from './WinLoseView'
+
 import GameState from './shared/GameState'
-import mapImageSrc from './map.png'
+import mapImageSrc from './map.svg'
 
 class DrunkardView extends Component {
 
@@ -33,6 +35,7 @@ class DrunkardView extends Component {
   }
 
   render() {
+    console.log(this.props)
     if (!this.props.drunkard.joined) {
       return (
         <div className='DrunkardView'>
@@ -40,19 +43,19 @@ class DrunkardView extends Component {
         </div>
       )
     }
+
     if (!this.props.driver.joined) {
       return (
         <div className='DrunkardView'>waiting for driver</div>
       )
     }
+
     if (this.props.phase === GameState.Phases.GAME_ENDED) {
       return (
-        <div className='DrunkardView'>
-          game over! you { this.props.victory ? 'win' : 'lose' }
-          <button onClick={this.props.resetGame}>again?</button>
-        </div>
+        <WinLoseView resetGame={this.props.resetGame} victory={this.props.victory}/>
       )
     }
+
     return (
       <div className='DrunkardView'>
         <div className='DrunkardView-Controls'>
@@ -64,7 +67,7 @@ class DrunkardView extends Component {
           </div>
         </div>
         <div className='DrunkardView-Help'>use <strong>arrow keys</strong> to move</div>
-        <canvas className="DrunkardView-Tile" width="200" height="200" ref={canvas => this.canvas = canvas}/>
+        <canvas className="DrunkardView-Tile" width="500" height="500" ref={canvas => this.canvas = canvas}/>
         {
           ['Up', 'Down', 'Right', 'Left'].map(dir => (
             <KeyHandler

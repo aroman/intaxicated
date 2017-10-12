@@ -105,7 +105,8 @@ button:hover {
   align-items: center;
   justify-content: flex-start;
   flex-direction: column;
-  height: 100%;
+  padding-top: 20px;
+  height: calc(100% - 20px);
 }
 
 .Game-InProgress {
@@ -143,9 +144,51 @@ button:hover {
   height: 100%;
 }
 
+@keyframes teeter {
+  0% {
+    transform: rotate(0deg);
+    /*border-radius: 100%;*/
+  }
+
+  0% {
+    transform: rotate(7deg);
+    /*border-radius: 100%;*/
+  }
+
+  100% {
+    transform: rotate(-7deg);
+    /*border-radius: 100%;*/
+  }
+}
+
+@keyframes blurry {
+  0% {
+    filter: blur(0px);
+  }
+
+  40% {
+    filter: blur(0px);
+  }
+
+  60% {
+    filter: blur(12px);
+  }
+
+  80% {
+    filter: blur(0px);
+  }
+
+  100% {
+    filter: blur(0px);
+  }
+}
+
 .DrunkardView-Tile {
   width: 250px;
   margin: 20px;
+  animation: teeter 3s ease-in-out 3s infinite alternate, blurry 10s ease 0s infinite alternate;
+  margin-top: 25px;
+
 }
 
 .DrunkardView-Controls {
@@ -271,4 +314,23 @@ button:hover {
   justify-content: space-around;
   margin-bottom: 25px;
 
+}
+
+
+.WinLoseView {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex-direction: column;
+}
+
+.WinLoseView-Title {
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+
+.WinLoseView-Text {
+  font-size: 22px;
+  margin-bottom: 20px;
 }
