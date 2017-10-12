@@ -140,6 +140,7 @@ button:hover {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  height: 100%;
 }
 
 .DrunkardView-Tile {
@@ -174,6 +175,7 @@ button:hover {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  height: 100%;
 }
 
 .DriverView button {

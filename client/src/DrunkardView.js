@@ -23,9 +23,9 @@ class DrunkardView extends Component {
     const sourceX = tileSize * this.props.drunkard.x
     const sourceY = tileSize * this.props.drunkard.y
     const sourceWidth = tileSize
-    const destWidth = tileSize
     const sourceHeight = tileSize
-    const destHeight = tileSize
+    const destWidth = this.canvas.width
+    const destHeight = this.canvas.height
     const destX = 0
     const destY = 0
     context.drawImage(this.mapImage, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight)
@@ -34,7 +34,9 @@ class DrunkardView extends Component {
   render() {
     if (!this.props.drunkard.joined) {
       return (
-        <button onClick={this.props.joinAsDrunkard}>Ready (drunkard)</button>
+        <div className='DrunkardView'>
+          <button onClick={this.props.joinAsDrunkard}>Ready (drunkard)</button>
+        </div>
       )
     }
     if (!this.props.driver.joined) {
@@ -61,7 +63,7 @@ class DrunkardView extends Component {
           </div>
         </div>
         <div className='DrunkardView-Help'>controls: arrow keys = move</div>
-        <canvas className="DrunkardView-Tile" width="100" height="100" ref={canvas => this.canvas = canvas}/>
+        <canvas className="DrunkardView-Tile" width="200" height="200" ref={canvas => this.canvas = canvas}/>
         {
           ['Up', 'Down', 'Right', 'Left'].map(dir => (
             <KeyHandler

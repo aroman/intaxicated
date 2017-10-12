@@ -129,6 +129,9 @@ class Game extends Component {
       if (role === Roles.Drunkard) return DrunkardView
       if (role === Roles.Undeclared) return UndeclaredView
     }
+    if (this.state.role !== Roles.Undeclared) {
+      document.title = `Intaxicated: ${this.state.role}`
+    }
     const roleView = React.createFactory(viewForRole(this.state.role))
     return (
       <div className="Game">
@@ -138,13 +141,6 @@ class Game extends Component {
           <div className="Game-InProgress">
             Game in progress!
             <button onClick={this.resetGame.bind(this)}>End game</button>
-          </div>
-          : null
-        }
-        {
-          (this.state.role === Roles.Undeclared) && (this.state.phase === GameState.Phases.GAME_ENDED) ?
-          <div className="Game-InProgress">
-              <button onClick={this.resetGame.bind(this)}>New game</button>
           </div>
           : null
         }

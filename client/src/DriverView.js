@@ -3,6 +3,7 @@ import KeyHandler from 'react-key-handler'
 
 import GameState from './shared/GameState'
 import mapImageSrc from './map.png'
+import iphoneSrc from './iphone.png'
 
 class DriverView extends Component {
 
@@ -20,8 +21,8 @@ constructor(props) {
     if (!this.canvas) return
     const context = this.canvas.getContext('2d')
     const outlineOffset = context.lineWidth / 2
-    context.drawImage(this.mapImage, 0, 0)
-    const tileSize = this.mapImage.width / GameState.MAP_SIZE
+    context.drawImage(this.mapImage, 0, 0, this.canvas.height, this.canvas.width)
+    const tileSize = this.canvas.height / GameState.MAP_SIZE
     context.beginPath()
     context.lineWidth = 5
     context.rect(
@@ -36,7 +37,9 @@ constructor(props) {
   render() {
     if (!this.props.driver.joined) {
       return (
-        <button onClick={this.props.joinAsDriver}>Ready (driver)</button>
+        <div className='DriverView'>
+          <button onClick={this.props.joinAsDriver}>Ready (driver)</button>
+        </div>
       )
     }
     if (!this.props.drunkard.joined) {
@@ -72,8 +75,8 @@ constructor(props) {
           </div>
         </div>
         <div className='DriverView-Help'>controls: arrow keys = move, spacebar = attempt pick-up</div>
+        {/* <div className='DriverView-Chasis' src={iphoneSrc}/> */}
         <canvas className="DriverView-Map" width="1000" height="1000" ref={canvas => this.canvas = canvas}/>
-
         {
           ['Up', 'Down', 'Right', 'Left'].map(dir => (
             <KeyHandler
