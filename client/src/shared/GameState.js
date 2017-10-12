@@ -2,7 +2,8 @@ const moment = require('moment')
 const _ = require('lodash')
 
 const MAP_SIZE = 10
-const ROUND_TIME = 5 // minutes
+const ROUND_TIME = 3 // minutes
+const MAX_PICKUP_ATTEMPTS = 3
 
 const Phases = {
   WAIT_FOR_PLAYERS: 'WAIT_FOR_PLAYERS',
@@ -68,6 +69,7 @@ module.exports = {
 
   MAP_SIZE,
   ROUND_TIME,
+  MAX_PICKUP_ATTEMPTS,
 
   InitialState,
 

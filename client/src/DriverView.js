@@ -95,8 +95,8 @@ class DriverView extends Component {
           </div>
           <div className='DriverView-Controls-Row'>
             <div className='DriverView-FailedPickups'>
-              Failed pickups:
-              <div className='DriverView-FailedPickups-count'>{this.props.driver.failedPickups}</div>
+              Pickup attempts:
+              <div className='DriverView-FailedPickups-count'>{this.props.driver.failedPickups}/{GameState.MAX_PICKUP_ATTEMPTS}</div>
             </div>
             <button onClick={this.props.pickup}>Attempt pick-up</button>
           </div>

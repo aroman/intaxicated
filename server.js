@@ -1,6 +1,6 @@
 const express = require('express')
 const path = require('path')
-const {Phases, freshGameState, timeRemaining, ROUND_TIME} = require('./client/src/shared/GameState.js')
+const {Phases, freshGameState, timeRemaining, ROUND_TIME, MAX_PICKUP_ATTEMPTS} = require('./client/src/shared/GameState.js')
 
 const app = express()
 
@@ -47,8 +47,13 @@ app.get('/pickup', (req, res) => {
   if (state.drunkard.x === state.driver.x && state.driver.y === state.drunkard.y) {
     state.phase = Phases.GAME_ENDED
     state.victory = true
-  } else {
+  }
+  else {
     state.driver.failedPickups += 1
+    if (state.driver.failedPickups >= MAX_PICKUP_ATTEMPTS) {
+      state.phase = Phases.GAME_ENDED
+      state.victory = false
+    }
   }
   res.json(state)
 })
