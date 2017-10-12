@@ -83,10 +83,14 @@ button {
   transition: all .2s cubic-bezier(.9,0,.1,1) !important;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   border-color: #E5E5E4;
   background-color: #E5E5E4;
   opacity: 0.9;
+}
+
+button:disabled {
+  cursor: default;
 }
 
 .btn-reverse {
