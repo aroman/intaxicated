@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import KeyHandler from 'react-key-handler'
+import _ from 'lodash'
 
 import GameState from './shared/GameState'
 import mapImageSrc from './map.svg'
 import WinLoseView from './WinLoseView'
+import moment from 'moment'
 // import iphoneSrc from './iphone.png'
 
 import { getValidDirections } from './MapUtils'
@@ -14,6 +16,7 @@ class DriverView extends Component {
     super(props)
     this.mapImage = new Image()
     this.mapImage.src = mapImageSrc
+    this.lastMoved = moment()
   }
 
   componentDidMount() {
@@ -51,6 +54,17 @@ class DriverView extends Component {
     )
     context.strokeStyle = validDirections.up ? 'green' : 'red'
     context.stroke()
+  }
+
+  canMove() {
+    return (moment() - this.lastMoved) > 2000
+  }
+
+  move(dir) {
+    if (this.canMove()) {
+      this.lastMoved = moment()
+      this.props.moveDriver(dir)
+    }
   }
 
   render() {
@@ -91,6 +105,9 @@ class DriverView extends Component {
               Time remaining:
               <div className='DriverView-Timer-time'>{GameState.timeRemaining(GameState.ROUND_TIME, this.props.gameStartTime)}</div>
             </div>
+            <div className='DriverView-TimeToMove'>
+              <div className='DriverView-TimeToMove-time'>{this.canMove() ? 'GO' : 'STOP'}</div>
+            </div>
           </div>
         </div>
         <div className='DriverView-Help'><strong>arrow keys</strong> to move | <strong>spacebar</strong> to attempt pick-up</div>
@@ -102,7 +119,7 @@ class DriverView extends Component {
               keyEventName="keydown"
               keyValue={`Arrow${dir}`}
               key={dir}
-              onKeyHandle={event => event.preventDefault() || this.props.moveDriver(dir)}
+              onKeyHandle={event => event.preventDefault() || this.move(dir)}
             />
           ))
         }

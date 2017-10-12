@@ -1,10 +1,18 @@
 import React, { Component } from 'react'
 import KeyHandler from 'react-key-handler'
+import moment from 'moment'
 
 import WinLoseView from './WinLoseView'
 
 import GameState from './shared/GameState'
 import mapImageSrc from './map.svg'
+
+const STUMBLE_TIME = 4000 // seconds
+const DIRECTIONS = ['Up', 'Down', 'Right', 'Left']
+
+function chooseRandomElement(collection) {
+	return collection[Math.floor(Math.random() * (collection.length - 1))];
+}
 
 class DrunkardView extends Component {
 
@@ -12,7 +20,26 @@ class DrunkardView extends Component {
     super(props)
     this.mapImage = new Image()
     this.mapImage.src = mapImageSrc
-    console.log(props)
+    this.timeLastMoved = moment()
+    if (!this.stumbleTimer) {
+      this.stumbleTimer = setInterval(this.stumbleIfNeeded.bind(this), 100)
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.stumbleTimer)
+  }
+
+  move(direction) {
+    this.timeLastMoved = moment()
+    this.props.moveDrunkard(direction)
+  }
+
+  stumbleIfNeeded() {
+    // console.log((moment() - this.timeLastMoved))
+    if ((moment() - this.timeLastMoved) > STUMBLE_TIME) {
+      this.move(chooseRandomElement(DIRECTIONS))
+    }
   }
 
   componentDidUpdate() {
@@ -35,7 +62,7 @@ class DrunkardView extends Component {
   }
 
   render() {
-    console.log(this.props)
+    // console.log(this.props)
     if (!this.props.drunkard.joined) {
       return (
         <div className='DrunkardView'>
@@ -69,12 +96,12 @@ class DrunkardView extends Component {
         <div className='DrunkardView-Help'>use <strong>arrow keys</strong> to move</div>
         <canvas className="DrunkardView-Tile" width="500" height="500" ref={canvas => this.canvas = canvas}/>
         {
-          ['Up', 'Down', 'Right', 'Left'].map(dir => (
+          DIRECTIONS.map(dir => (
             <KeyHandler
               keyEventName="keydown"
               keyValue={`Arrow${dir}`}
               key={dir}
-              onKeyHandle={event => event.preventDefault() || this.props.moveDrunkard(dir)}
+              onKeyHandle={event => event.preventDefault() || this.move(dir)}
             />
           ))
         }

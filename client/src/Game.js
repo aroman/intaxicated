@@ -186,7 +186,7 @@ class Game extends Component {
           joinAsDrunkard: this.joinAsDrunkard.bind(this),
           joinAsDriver: this.joinAsDriver.bind(this),
           moveDrunkard: _.debounce(this.moveDrunkard.bind(this), 100),
-          moveDriver: _.debounce(this.moveDriver.bind(this), 100),
+          moveDriver: this.moveDriver.bind(this),
           pickup: this.pickup.bind(this),
           resetGame: this.resetGame.bind(this),
         })}
